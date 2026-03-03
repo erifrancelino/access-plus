@@ -1,90 +1,214 @@
-/* Reset básico */
+/* =========================
+   RESET
+========================= */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Fonte e base */
+/* =========================
+   BASE
+========================= */
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    line-height: 1.6;
-    background-color: #f4f4f4;
-    color: #222;
+    font-family: "Inter", "Segoe UI", sans-serif;
+    background-color: #F4F1EA;
+    color: #1C1C1C;
+    line-height: 1.7;
+    font-size: 16px;
 }
 
-/* Navegação */
+/* Container geral */
+main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+}
+
+/* =========================
+   TIPOGRAFIA EDITORIAL
+========================= */
+
+h1, h2, h3 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+}
+
+h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+p {
+    margin-bottom: 1.5rem;
+    max-width: 650px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header {
+    padding: 2rem;
+    border-bottom: 1px solid #ddd8cf;
+}
+
 nav {
-    background-color: #111;
-    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 nav ul {
     display: flex;
-    gap: 1.5rem;
+    gap: 2.5rem;
     list-style: none;
 }
 
 nav a {
-    color: #ffffff;
     text-decoration: none;
-    font-weight: bold;
+    color: #1C1C1C;
+    font-weight: 500;
+    position: relative;
 }
 
-/* Foco visível (ACESSIBILIDADE IMPORTANTE) */
-nav a:focus {
-    outline: 3px solid #00ffcc;
-    outline-offset: 4px;
+/* Linha editorial no hover */
+nav a::after {
+    content: "";
+    position: absolute;
+    width: 0%;
+    height: 1px;
+    bottom: -4px;
+    left: 0;
+    background-color: #7A9E7E;
+    transition: 0.3s;
 }
 
-/* Seções */
+nav a:hover::after {
+    width: 100%;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero {
+    padding: 6rem 0;
+}
+
+.hero span {
+    display: block;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #5C7F61;
+    margin-bottom: 1rem;
+}
+
+/* =========================
+   SEÇÕES
+========================= */
+
 section {
-    padding: 3rem 2rem;
+    margin-bottom: 6rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid #ddd8cf;
 }
 
-/* Títulos */
-h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+/* =========================
+   GRID PROJETOS
+========================= */
+
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 3rem;
 }
 
-h2 {
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
+.project-card {
+    padding: 2rem;
+    border: 1px solid #ddd8cf;
+    transition: 0.3s ease;
 }
 
-/* Footer */
-footer {
-    background-color: #111;
-    color: white;
-    text-align: center;
-    padding: 1rem;
+.project-card:hover {
+    background-color: #EDE9E1;
 }
-/* Botão de contraste */
-#toggle-contrast {
-    margin: 1rem;
-    padding: 0.6rem 1rem;
-    background-color: #00ffcc;
-    border: none;
-    font-weight: bold;
+
+/* =========================
+   BOTÕES
+========================= */
+
+button {
+    background: transparent;
+    border: 1px solid #2F3A3F;
+    padding: 0.8rem 1.5rem;
+    font-family: inherit;
     cursor: pointer;
+    transition: 0.3s ease;
 }
 
-#toggle-contrast:focus {
-    outline: 3px solid #ff00ff;
+button:hover {
+    background-color: #2F3A3F;
+    color: #F4F1EA;
+}
+
+/* =========================
+   FOCO ACESSÍVEL
+========================= */
+
+a:focus,
+button:focus {
+    outline: 3px solid #C67C8E;
     outline-offset: 4px;
 }
 
-/* Modo alto contraste */
+/* =========================
+   ALTO CONTRASTE
+========================= */
+
 .high-contrast {
     background-color: #000;
     color: #fff;
 }
 
-.high-contrast nav {
-    background-color: #000;
+.high-contrast header,
+.high-contrast section {
+    border-color: #444;
 }
 
-.high-contrast footer {
-    background-color: #000;
+.high-contrast button {
+    border-color: #fff;
+}
+
+.high-contrast a {
+    color: #fff;
+}
+#toggle-contrast {
+    margin-top: 3rem;
+}
+.high-contrast #toggle-contrast {
+    color: #fff;
+    border-color: #fff;
+}
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 20px;
+    background: #2F3A3F;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    z-index: 100;
+    transition: top 0.3s;
+}
+
+.skip-link:focus {
+    top: 20px;
 }
