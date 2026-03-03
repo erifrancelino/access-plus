@@ -60,3 +60,31 @@ footer {
     text-align: center;
     padding: 1rem;
 }
+/* Botão de contraste */
+#toggle-contrast {
+    margin: 1rem;
+    padding: 0.6rem 1rem;
+    background-color: #00ffcc;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#toggle-contrast:focus {
+    outline: 3px solid #ff00ff;
+    outline-offset: 4px;
+}
+
+/* Modo alto contraste */
+.high-contrast {
+    background-color: #000;
+    color: #fff;
+}
+
+.high-contrast nav {
+    background-color: #000;
+}
+
+.high-contrast footer {
+    background-color: #000;
+}
