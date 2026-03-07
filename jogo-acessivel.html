@@ -11,20 +11,20 @@
 <style>
 
 :root {
-  --bg:        #2C1F14;
-  --bg2:       #352718;
-  --surface:   #3E2E1E;
-  --surface2:  #4A3828;
-  --border:    #6B4F35;
-  --gold:      #C9A84C;
-  --gold-soft: #E8C97A;
-  --cream:     #F5EDD8;
-  --cream2:    #EDE0C4;
-  --text:      #F5EDD8;
-  --text-muted:#B89F82;
-  --sage:      #8FAF8A;
-  --blush:     #C4897A;
-  --dust:      #A89070;
+  --bg:        #E8D9BE;
+  --bg2:       #DFD0B0;
+  --surface:   #F0E6CE;
+  --surface2:  #F7F0E2;
+  --border:    #C8B898;
+  --gold:      #8B6F47;
+  --gold-soft: #6B5035;
+  --cream:     #3D2E1E;
+  --cream2:    #5C4A32;
+  --text:      #3D2E1E;
+  --text-muted:#7A6448;
+  --sage:      #8FA882;
+  --blush:     #C49080;
+  --dust:      #B8A080;
   --radius:    20px;
   --card-size: clamp(82px, 13vw, 125px);
   --font-serif: 'Cormorant Garamond', Georgia, serif;
@@ -35,20 +35,20 @@
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--bg);
+  background-color: #F7F0E2;
   color: var(--text);
   min-height: 100vh;
   line-height: 1.6;
   background-image:
-    radial-gradient(ellipse at 10% 0%, rgba(201,168,76,.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 90% 100%, rgba(143,175,138,.06) 0%, transparent 50%);
+    radial-gradient(ellipse at 10% 0%, rgba(143,168,130,.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 100%, rgba(196,144,128,.10) 0%, transparent 50%);
 }
 
 .skip-link {
   position: absolute;
   top: -60px; left: 1.5rem;
   background: var(--gold);
-  color: var(--bg);
+  color: #F7F0E2;
   padding: .5rem 1.2rem;
   border-radius: 100px;
   text-decoration: none;
@@ -62,7 +62,7 @@ body {
 
 header {
   padding: 1.5rem 2.5rem;
-  border-bottom: 1px solid rgba(201,168,76,.2);
+  border-bottom: 1px solid rgba(139,111,71,.25);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -71,7 +71,7 @@ header {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(44,31,20,.9);
+  background: rgba(232,217,190,.95);
   backdrop-filter: blur(12px);
 }
 
@@ -87,7 +87,7 @@ header {
   text-transform: uppercase;
   transition: color .2s;
 }
-.logo-back:hover { color: var(--gold-soft); }
+.logo-back:hover { color: var(--gold); }
 .logo-back:focus { outline: 2px solid var(--gold); outline-offset: 4px; border-radius: 4px; }
 
 .header-right { text-align: right; }
@@ -98,7 +98,7 @@ header {
   font-weight: 600;
   font-style: italic;
   letter-spacing: 1px;
-  color: var(--gold-soft);
+  color: var(--gold);
 }
 
 .game-subtitle {
@@ -109,6 +109,169 @@ header {
   font-weight: 300;
 }
 
+/* ========================
+   BARRA DE ACESSIBILIDADE
+======================== */
+.accessibility-bar {
+  background: var(--bg2); 
+  border-bottom: 1px solid rgba(139,111,71,.2);
+  padding: .6rem 2.5rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .6rem;
+}
+
+.a11y-label {
+  font-size: .65rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  font-weight: 300;
+  white-space: nowrap;
+}
+
+.a11y-divider {
+  width: 1px;
+  height: 16px;
+  background: rgba(139,111,71,.25);
+  flex-shrink: 0;
+}
+
+.btn-a11y {
+  font-family: var(--font-sans);
+  font-size: .75rem;
+  font-weight: 400;
+  padding: .3rem .9rem;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all .2s;
+  background: transparent;
+  color: var(--text-muted);
+  letter-spacing: .2px;
+  white-space: nowrap;
+}
+.btn-a11y:hover { border-color: var(--gold); color: var(--gold); }
+.btn-a11y:focus { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* Alto contraste ativo */
+.btn-a11y#a11y-contrast[aria-pressed="true"] {
+  background: rgba(255,255,255,.1);
+  border-color: rgba(255,255,255,.4);
+  color: #fff;
+}
+
+/* TTS ativo */
+.btn-a11y#a11y-tts[aria-pressed="true"] {
+  background: rgba(143,175,138,.15);
+  border-color: rgba(143,175,138,.5);
+  color: var(--sage);
+}
+
+/* Fonte */
+.controle-fonte-bar {
+  display: flex;
+  gap: .3rem;
+  align-items: center;
+}
+.controle-fonte-bar .btn-a11y {
+  padding: .3rem .6rem;
+  font-weight: 600;
+  min-width: 2rem;
+  text-align: center;
+}
+.controle-fonte-bar .btn-a11y:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+.controle-fonte-bar .btn-a11y:disabled:hover {
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+/* Daltonismo */
+.colorblind-bar {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+.colorblind-bar select {
+  font-family: var(--font-sans);
+  font-size: .75rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: .3rem .6rem;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.colorblind-bar select:hover { border-color: var(--gold); }
+.colorblind-bar select:focus { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* Alto contraste global */
+.high-contrast {
+  filter: none !important;
+}
+.high-contrast body {
+  background-color: #000 !important;
+  color: #fff !important;
+}
+.high-contrast header,
+.high-contrast .accessibility-bar {
+  background: #111 !important;
+  border-color: #fff !important;
+}
+.high-contrast main {
+  background-color: #000 !important;
+}
+.high-contrast * {
+  color: #fff !important;
+  border-color: #555 !important;
+}
+.high-contrast .btn,
+.high-contrast .btn-a11y {
+  background: #111 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+.high-contrast .btn-primary {
+  background: #fff !important;
+  color: #000 !important;
+}
+.high-contrast .colorblind-bar select {
+  background: #111 !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+.high-contrast .instructions,
+.high-contrast .score-item,
+.high-contrast .modal {
+  background: #111 !important;
+  border-color: #fff !important;
+}
+.high-contrast .card-back {
+  background: #111 !important;
+  border-color: #fff !important;
+}
+.high-contrast .card-front {
+  background: #111 !important;
+  border-color: #888 !important;
+}
+.high-contrast .game-title,
+.high-contrast .instructions h2,
+.high-contrast .score-value,
+.high-contrast .stat-n,
+.high-contrast .modal h2 {
+  color: #FFD700 !important;
+}
+
+/* Daltonismo no html */
+html.protanopia  { filter: saturate(0%) sepia(100%) hue-rotate(295deg) saturate(300%) brightness(90%); }
+html.deuteranopia{ filter: saturate(0%) sepia(100%) hue-rotate(120deg) saturate(250%) brightness(90%); }
+html.tritanopia  { filter: saturate(0%) sepia(100%) hue-rotate(180deg) saturate(200%) brightness(90%); }
+
 main {
   max-width: 960px;
   margin: 0 auto;
@@ -116,8 +279,8 @@ main {
 }
 
 .instructions {
-  background: var(--surface);
-  border: 1px solid rgba(201,168,76,.2);
+  background: var(--surface2);
+  border: 1px solid rgba(139,111,71,.25);
   border-radius: var(--radius);
   padding: 1.75rem 2rem;
   margin-bottom: 2rem;
@@ -135,7 +298,7 @@ main {
   font-family: var(--font-serif);
   font-size: 1.15rem;
   font-weight: 600;
-  color: var(--gold-soft);
+  color: var(--gold);
   margin-bottom: .6rem;
   letter-spacing: .5px;
 }
@@ -171,7 +334,7 @@ main {
   border: 1px solid;
   letter-spacing: .3px;
 }
-.badge-sound  { background: rgba(201,168,76,.1);  border-color: rgba(201,168,76,.4);  color: var(--gold-soft); }
+.badge-sound  { background: rgba(139,111,71,.12);  border-color: rgba(139,111,71,.4);  color: var(--gold); }
 .badge-visual { background: rgba(143,175,138,.1); border-color: rgba(143,175,138,.4); color: var(--sage); }
 .badge-color  { background: rgba(196,137,122,.1); border-color: rgba(196,137,122,.4); color: var(--blush); }
 .badge-aria   { background: rgba(168,144,112,.1); border-color: rgba(168,144,112,.4); color: var(--dust); }
@@ -193,22 +356,22 @@ main {
   border: 1px solid var(--border);
   cursor: pointer;
   transition: all .25s;
-  background: var(--surface);
+  background: var(--surface2);
   color: var(--text-muted);
   letter-spacing: .3px;
 }
-.btn:hover { border-color: var(--gold); color: var(--gold-soft); background: var(--surface2); }
+.btn:hover { border-color: var(--gold); color: var(--gold); background: var(--surface2); }
 .btn:focus { outline: 2px solid var(--gold); outline-offset: 3px; }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--gold), #A8872E);
+  background: linear-gradient(135deg, #8B6F47, #6B5035);
   border-color: transparent;
-  color: var(--bg);
+  color: #F7F0E2;
   font-weight: 500;
 }
 .btn-primary:hover {
-  background: linear-gradient(135deg, var(--gold-soft), var(--gold));
-  color: var(--bg);
+  background: linear-gradient(135deg, #A88060, #8B6F47);
+  color: #F7F0E2;
   border-color: transparent;
 }
 
@@ -225,8 +388,8 @@ main {
   margin-left: auto;
 }
 .score-item {
-  background: var(--surface);
-  border: 1px solid rgba(201,168,76,.15);
+  background: var(--surface2);
+  border: 1px solid rgba(139,111,71,.2);
   border-radius: 14px;
   padding: .5rem 1.1rem;
   text-align: center;
@@ -246,7 +409,7 @@ main {
   font-size: 1.6rem;
   font-weight: 600;
   line-height: 1;
-  color: var(--gold-soft);
+  color: var(--gold);
 }
 
 .sound-visualizer {
@@ -285,7 +448,7 @@ main {
   font-family: var(--font-serif);
   font-style: italic;
   font-size: 1rem;
-  color: var(--gold-soft);
+  color: var(--gold);
   min-height: 1.4rem;
   margin-bottom: 1.75rem;
   letter-spacing: .5px;
@@ -356,21 +519,23 @@ main {
 }
 
 .card-back {
-  background: var(--surface);
-  border-color: rgba(201,168,76,.2);
-  background-image: radial-gradient(circle at 50% 50%, rgba(201,168,76,.07) 0%, transparent 70%);
+  background: var(--surface2);
+  border-color: #8B6F47;
+  border-width: 1.5px;
+  background-image: radial-gradient(circle at 50% 50%, rgba(139,111,71,.12) 0%, transparent 70%);
+  box-shadow: 0 2px 8px rgba(139,111,71,.15);
 }
 .card-back::after {
   content: '';
   position: absolute;
   inset: 7px;
   border-radius: 12px;
-  border: 1px solid rgba(201,168,76,.1);
+  border: 1px solid rgba(139,111,71,.35);
 }
 .card-back-pattern {
   font-size: clamp(1.2rem, 3vw, 1.8rem);
-  opacity: .2;
-  color: var(--gold);
+  opacity: .45;
+  color: #8B6F47;
 }
 
 .card-front {
@@ -400,8 +565,8 @@ main {
 }
 
 .card.matched .card-front {
-  border-color: rgba(201,168,76,.5);
-  box-shadow: 0 0 20px rgba(201,168,76,.18), inset 0 0 20px rgba(201,168,76,.04);
+  border-color: rgba(139,111,71,.6);
+  box-shadow: 0 0 20px rgba(139,111,71,.25), inset 0 0 20px rgba(139,111,71,.06);
 }
 .card.matched .card-inner { animation: matchPop .4s ease; }
 
@@ -421,7 +586,7 @@ main {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20,12,6,.88);
+  background: rgba(61,46,30,.75);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -434,8 +599,8 @@ main {
 .modal-overlay.visible { opacity: 1; pointer-events: all; }
 
 .modal {
-  background: var(--surface);
-  border: 1px solid rgba(201,168,76,.3);
+  background: var(--surface2);
+  border: 1px solid rgba(139,111,71,.35);
   border-radius: 28px;
   padding: 3rem 2.5rem;
   max-width: 400px;
@@ -461,7 +626,7 @@ main {
   font-size: 2.2rem;
   font-weight: 600;
   font-style: italic;
-  color: var(--gold-soft);
+  color: var(--gold);
   margin-bottom: .4rem;
 }
 .modal p {
@@ -478,8 +643,8 @@ main {
   margin-bottom: 2rem;
 }
 .modal-stat {
-  background: var(--bg2);
-  border: 1px solid rgba(201,168,76,.15);
+  background: var(--bg2); 
+  border: 1px solid rgba(139,111,71,.2);
   border-radius: 14px;
   padding: .75rem 1.25rem;
 }
@@ -487,7 +652,7 @@ main {
   font-family: var(--font-serif);
   font-size: 2rem;
   font-weight: 600;
-  color: var(--gold-soft);
+  color: var(--gold);
   display: block;
   line-height: 1;
 }
@@ -543,6 +708,49 @@ main {
     <p class="game-subtitle">Jogo da Memória Acessível</p>
   </div>
 </header>
+
+<!-- Barra de acessibilidade -->
+<div class="accessibility-bar" role="toolbar" aria-label="Controles de acessibilidade da página">
+
+  <span class="a11y-label" aria-hidden="true">Acessibilidade</span>
+  <div class="a11y-divider" aria-hidden="true"></div>
+
+  <!-- Alto contraste -->
+  <button class="btn-a11y" id="a11y-contrast" aria-pressed="false" aria-label="Ativar alto contraste">
+    ◐ Alto Contraste
+  </button>
+
+  <div class="a11y-divider" aria-hidden="true"></div>
+
+  <!-- TTS -->
+  <button class="btn-a11y" id="a11y-tts" aria-pressed="false" aria-label="Ativar leitura em voz alta">
+    🔊 Ouvir conteúdo
+  </button>
+
+  <div class="a11y-divider" aria-hidden="true"></div>
+
+  <!-- Tamanho de fonte -->
+  <div class="controle-fonte-bar" role="group" aria-label="Controle de tamanho de fonte">
+    <button class="btn-a11y" id="a11y-aumentar" aria-label="Aumentar fonte">A+</button>
+    <button class="btn-a11y" id="a11y-diminuir" aria-label="Diminuir fonte">A-</button>
+  </div>
+
+  <div class="a11y-divider" aria-hidden="true"></div>
+
+  <!-- Daltonismo -->
+  <div class="colorblind-bar">
+    <label for="a11y-colorblind" class="a11y-label">Simular Daltonismo:</label>
+    <select id="a11y-colorblind" aria-label="Selecionar simulação de daltonismo">
+      <option value="normal">Visão Normativa</option>
+      <option value="protanopia">Protanopia</option>
+      <option value="deuteranopia">Deuteranopia</option>
+      <option value="tritanopia">Tritanopia</option>
+    </select>
+  </div>
+
+</div>
+
+<div id="a11y-message" aria-live="polite" style="position:absolute;left:-9999px;height:1px;overflow:hidden;"></div>
 
 <main id="main-content">
 
@@ -868,6 +1076,105 @@ document.addEventListener('keydown', e => {
     if (modal.classList.contains('visible')) closeVictory();
   }
 });
+
+/* =====================================================
+   CONTROLES DE ACESSIBILIDADE DA PÁGINA
+===================================================== */
+function saveA11y(key, value) { try { localStorage.setItem(key, value); } catch(e) {} }
+function loadA11y(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
+function announceA11y(msg) {
+  const el = document.getElementById('a11y-message');
+  el.textContent = '';
+  requestAnimationFrame(() => { el.textContent = msg; });
+}
+
+// Alto contraste
+const btnContrast = document.getElementById('a11y-contrast');
+if (btnContrast) {
+  if (loadA11y('hc-jogo') === 'true') {
+    document.body.classList.add('high-contrast');
+    btnContrast.setAttribute('aria-pressed', 'true');
+    btnContrast.textContent = '◑ Desativar Contraste';
+  }
+  btnContrast.addEventListener('click', function() {
+    const on = this.getAttribute('aria-pressed') === 'true';
+    document.body.classList.toggle('high-contrast');
+    this.setAttribute('aria-pressed', String(!on));
+    this.textContent = on ? '◐ Alto Contraste' : '◑ Desativar Contraste';
+    saveA11y('hc-jogo', String(!on));
+    announceA11y(on ? 'Alto contraste desativado' : 'Alto contraste ativado');
+  });
+}
+
+// TTS
+const btnTTS = document.getElementById('a11y-tts');
+if (btnTTS && 'speechSynthesis' in window) {
+  btnTTS.addEventListener('click', function() {
+    const isReading = this.getAttribute('aria-pressed') === 'true';
+    if (isReading) {
+      speechSynthesis.cancel();
+      this.setAttribute('aria-pressed', 'false');
+      this.textContent = '🔊 Ouvir conteúdo';
+      this.setAttribute('aria-label', 'Ativar leitura em voz alta');
+      announceA11y('Leitura interrompida');
+    } else {
+      speechSynthesis.cancel();
+      const texto = document.getElementById('main-content')?.innerText || document.body.innerText;
+      const fala = new SpeechSynthesisUtterance(texto);
+      fala.lang = 'pt-BR'; fala.rate = 0.95;
+      fala.onstart = () => {
+        this.setAttribute('aria-pressed', 'true');
+        this.textContent = '⏹ Parar leitura';
+        this.setAttribute('aria-label', 'Parar leitura em voz alta');
+        announceA11y('Leitura iniciada');
+      };
+      fala.onend = fala.onerror = () => {
+        this.setAttribute('aria-pressed', 'false');
+        this.textContent = '🔊 Ouvir conteúdo';
+        this.setAttribute('aria-label', 'Ativar leitura em voz alta');
+      };
+      speechSynthesis.speak(fala);
+    }
+  });
+  window.addEventListener('beforeunload', () => speechSynthesis.cancel());
+} else if (btnTTS) {
+  btnTTS.style.display = 'none';
+}
+
+// Tamanho de fonte
+const btnA = document.getElementById('a11y-aumentar');
+const btnD = document.getElementById('a11y-diminuir');
+const FMIN=80, FMAX=150, FPASSO=10, FPADRAO=100;
+if (btnA && btnD) {
+  let tamanho = parseInt(loadA11y('fonte-jogo'), 10) || FPADRAO;
+  function aplicarFonte(t) {
+    document.body.style.fontSize = t + '%';
+    saveA11y('fonte-jogo', t);
+    btnA.disabled = t >= FMAX;
+    btnD.disabled = t <= FMIN;
+    announceA11y(`Fonte: ${t}%`);
+  }
+  aplicarFonte(tamanho);
+  btnA.addEventListener('click', () => { if (tamanho < FMAX) { tamanho += FPASSO; aplicarFonte(tamanho); } });
+  btnD.addEventListener('click', () => { if (tamanho > FMIN) { tamanho -= FPASSO; aplicarFonte(tamanho); } });
+}
+
+// Daltonismo
+const selColor = document.getElementById('a11y-colorblind');
+if (selColor) {
+  const savedMode = loadA11y('daltonismo-jogo');
+  if (savedMode && savedMode !== 'normal') {
+    document.documentElement.classList.add(savedMode);
+    selColor.value = savedMode;
+  }
+  selColor.addEventListener('change', function() {
+    document.documentElement.classList.remove('protanopia','deuteranopia','tritanopia');
+    if (this.value !== 'normal') document.documentElement.classList.add(this.value);
+    saveA11y('daltonismo-jogo', this.value);
+    const labels = { normal:'Visão normativa', protanopia:'Protanopia ativada', deuteranopia:'Deuteranopia ativada', tritanopia:'Tritanopia ativada' };
+    announceA11y(labels[this.value] || 'Modo visual alterado');
+  });
+}
 
 buildBoard();
 </script>
