@@ -7,254 +7,325 @@
 <meta name="description" content="Jogo da memória acessível com sons, imagens e símbolos. Jogável por pessoas surdas, cegas, daltônicas e videntes.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 
-/* ========================
-   VARIÁVEIS & RESET
-======================== */
 :root {
-  --bg: #0E0E12;
-  --surface: #17171E;
-  --surface2: #1F1F2A;
-  --border: #2E2E3D;
-  --accent: #7B61FF;
-  --accent2: #FF6B6B;
-  --accent3: #6BFFB8;
-  --accent4: #FFD166;
-  --text: #F0EFF8;
-  --text-muted: #8B8AA0;
-  --radius: 16px;
-  --card-size: clamp(80px, 14vw, 130px);
-  --font-display: 'Syne', sans-serif;
-  --font-mono: 'Space Mono', monospace;
+  --bg:        #2C1F14;
+  --bg2:       #352718;
+  --surface:   #3E2E1E;
+  --surface2:  #4A3828;
+  --border:    #6B4F35;
+  --gold:      #C9A84C;
+  --gold-soft: #E8C97A;
+  --cream:     #F5EDD8;
+  --cream2:    #EDE0C4;
+  --text:      #F5EDD8;
+  --text-muted:#B89F82;
+  --sage:      #8FAF8A;
+  --blush:     #C4897A;
+  --dust:      #A89070;
+  --radius:    20px;
+  --card-size: clamp(82px, 13vw, 125px);
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans:  'DM Sans', sans-serif;
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: var(--font-display);
+  font-family: var(--font-sans);
   background-color: var(--bg);
   color: var(--text);
   min-height: 100vh;
   line-height: 1.6;
+  background-image:
+    radial-gradient(ellipse at 10% 0%, rgba(201,168,76,.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 100%, rgba(143,175,138,.06) 0%, transparent 50%);
 }
 
-/* ========================
-   SKIP LINK
-======================== */
 .skip-link {
   position: absolute;
-  top: -60px;
-  left: 1rem;
-  background: var(--accent);
-  color: #fff;
-  padding: .5rem 1rem;
-  border-radius: 8px;
+  top: -60px; left: 1.5rem;
+  background: var(--gold);
+  color: var(--bg);
+  padding: .5rem 1.2rem;
+  border-radius: 100px;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 500;
+  font-size: .85rem;
   z-index: 999;
   transition: top .3s;
+  letter-spacing: .5px;
 }
 .skip-link:focus { top: 1rem; }
 
-/* ========================
-   HEADER
-======================== */
 header {
-  padding: 1.5rem 2rem;
-  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 2.5rem;
+  border-bottom: 1px solid rgba(201,168,76,.2);
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(44,31,20,.9);
+  backdrop-filter: blur(12px);
 }
 
 .logo-back {
   display: flex;
   align-items: center;
-  gap: .75rem;
+  gap: .6rem;
   text-decoration: none;
   color: var(--text-muted);
-  font-size: .85rem;
-  font-family: var(--font-mono);
+  font-size: .82rem;
+  font-weight: 300;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   transition: color .2s;
 }
-.logo-back:hover { color: var(--text); }
-.logo-back:focus { outline: 3px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
-.logo-back span { font-size: 1.1rem; }
+.logo-back:hover { color: var(--gold-soft); }
+.logo-back:focus { outline: 2px solid var(--gold); outline-offset: 4px; border-radius: 4px; }
+
+.header-right { text-align: right; }
 
 .game-title {
-  font-size: clamp(1.4rem, 4vw, 2rem);
-  font-weight: 800;
-  letter-spacing: -1px;
-  background: linear-gradient(135deg, var(--accent), var(--accent3));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-family: var(--font-serif);
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  font-weight: 600;
+  font-style: italic;
+  letter-spacing: 1px;
+  color: var(--gold-soft);
 }
 
-/* ========================
-   MAIN LAYOUT
-======================== */
+.game-subtitle {
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  font-weight: 300;
+}
+
 main {
-  max-width: 1000px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
+  padding: 2.5rem 1.5rem 5rem;
 }
 
-/* ========================
-   INSTRUÇÕES
-======================== */
 .instructions {
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(201,168,76,.2);
   border-radius: var(--radius);
-  padding: 1.5rem 2rem;
+  padding: 1.75rem 2rem;
   margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
 }
-
+.instructions::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
 .instructions h2 {
-  font-size: 1rem;
-  font-family: var(--font-mono);
-  color: var(--accent3);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: .75rem;
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--gold-soft);
+  margin-bottom: .6rem;
+  letter-spacing: .5px;
 }
-
 .instructions p {
-  font-size: .9rem;
+  font-size: .88rem;
   color: var(--text-muted);
-  line-height: 1.7;
+  line-height: 1.75;
+  font-weight: 300;
+}
+.instructions kbd {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: .1rem .4rem;
+  font-size: .8rem;
+  color: var(--cream2);
 }
 
 .accessibility-badges {
   display: flex;
   flex-wrap: wrap;
   gap: .5rem;
-  margin-top: 1rem;
+  margin-top: 1.1rem;
 }
-
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: .4rem;
-  padding: .3rem .8rem;
+  gap: .35rem;
+  padding: .25rem .75rem;
   border-radius: 100px;
-  font-size: .78rem;
-  font-family: var(--font-mono);
-  font-weight: 700;
+  font-size: .72rem;
+  font-weight: 500;
   border: 1px solid;
+  letter-spacing: .3px;
 }
-.badge-sound  { background: #1a1240; border-color: var(--accent);  color: var(--accent);  }
-.badge-visual { background: #0d2618; border-color: var(--accent3); color: var(--accent3); }
-.badge-color  { background: #2a1a00; border-color: var(--accent4); color: var(--accent4); }
-.badge-aria   { background: #2a0d0d; border-color: var(--accent2); color: var(--accent2); }
+.badge-sound  { background: rgba(201,168,76,.1);  border-color: rgba(201,168,76,.4);  color: var(--gold-soft); }
+.badge-visual { background: rgba(143,175,138,.1); border-color: rgba(143,175,138,.4); color: var(--sage); }
+.badge-color  { background: rgba(196,137,122,.1); border-color: rgba(196,137,122,.4); color: var(--blush); }
+.badge-aria   { background: rgba(168,144,112,.1); border-color: rgba(168,144,112,.4); color: var(--dust); }
 
-/* ========================
-   PAINEL DE CONTROLES
-======================== */
 .controls {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
+  gap: .75rem;
   margin-bottom: 2rem;
 }
 
 .btn {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: .9rem;
-  padding: .65rem 1.4rem;
-  border-radius: 10px;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: .82rem;
+  padding: .6rem 1.3rem;
+  border-radius: 100px;
   border: 1px solid var(--border);
   cursor: pointer;
-  transition: all .2s;
-  background: var(--surface2);
-  color: var(--text);
+  transition: all .25s;
+  background: var(--surface);
+  color: var(--text-muted);
+  letter-spacing: .3px;
 }
-.btn:hover { background: var(--surface); border-color: var(--accent); color: var(--accent); }
-.btn:focus { outline: 3px solid var(--accent); outline-offset: 3px; }
+.btn:hover { border-color: var(--gold); color: var(--gold-soft); background: var(--surface2); }
+.btn:focus { outline: 2px solid var(--gold); outline-offset: 3px; }
 
 .btn-primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
+  background: linear-gradient(135deg, var(--gold), #A8872E);
+  border-color: transparent;
+  color: var(--bg);
+  font-weight: 500;
 }
-.btn-primary:hover { background: #6b52ee; border-color: #6b52ee; color: #fff; }
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--gold-soft), var(--gold));
+  color: var(--bg);
+  border-color: transparent;
+}
 
-/* toggle de som */
 #toggle-sound[aria-pressed="true"] {
-  background: #0d2618;
-  border-color: var(--accent3);
-  color: var(--accent3);
+  background: rgba(143,175,138,.15);
+  border-color: rgba(143,175,138,.5);
+  color: var(--sage);
 }
 
-/* ========================
-   PLACAR
-======================== */
 .scoreboard {
   display: flex;
-  gap: 1rem;
+  gap: .75rem;
   flex-wrap: wrap;
   margin-left: auto;
 }
-
 .score-item {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: .5rem 1rem;
+  border: 1px solid rgba(201,168,76,.15);
+  border-radius: 14px;
+  padding: .5rem 1.1rem;
   text-align: center;
-  min-width: 80px;
+  min-width: 72px;
 }
-
-.score-item .score-label {
-  font-family: var(--font-mono);
-  font-size: .65rem;
+.score-label {
+  font-size: .6rem;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   display: block;
+  font-weight: 400;
+  margin-bottom: .1rem;
+}
+.score-value {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--gold-soft);
 }
 
-.score-item .score-value {
-  font-size: 1.5rem;
-  font-weight: 800;
-  line-height: 1.2;
-  font-family: var(--font-mono);
-  color: var(--accent);
+.sound-visualizer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 44px;
+  margin: 1.5rem 0 .5rem;
+  opacity: 0;
+  transition: opacity .4s;
+}
+.sound-visualizer.active { opacity: 1; }
+
+.sound-bar {
+  width: 4px;
+  border-radius: 4px;
+  background: var(--gold);
+  animation: soundBar .5s ease-in-out infinite alternate;
+}
+.sound-bar:nth-child(1) { height: 10px; animation-delay: 0s; }
+.sound-bar:nth-child(2) { height: 22px; animation-delay: .08s; }
+.sound-bar:nth-child(3) { height: 34px; animation-delay: .14s; }
+.sound-bar:nth-child(4) { height: 26px; animation-delay: .04s; }
+.sound-bar:nth-child(5) { height: 34px; animation-delay: .18s; }
+.sound-bar:nth-child(6) { height: 18px; animation-delay: .09s; }
+.sound-bar:nth-child(7) { height: 10px; animation-delay: 0s; }
+
+@keyframes soundBar {
+  from { transform: scaleY(.25); opacity: .5; }
+  to   { transform: scaleY(1);   opacity: 1; }
 }
 
-/* ========================
-   TABULEIRO
-======================== */
+.current-sound-name {
+  text-align: center;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--gold-soft);
+  min-height: 1.4rem;
+  margin-bottom: 1.75rem;
+  letter-spacing: .5px;
+  transition: color .3s;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 2rem 0 1.75rem;
+  opacity: .25;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.divider-gem { color: var(--gold); font-size: .7rem; }
+
 #game-board {
   display: grid;
   grid-template-columns: repeat(4, var(--card-size));
-  gap: clamp(8px, 2vw, 16px);
+  gap: clamp(10px, 2vw, 18px);
   justify-content: center;
   margin: 0 auto;
 }
 
-/* ========================
-   CARTA
-======================== */
 .card {
   width: var(--card-size);
   height: var(--card-size);
   position: relative;
   cursor: pointer;
-  perspective: 600px;
-  border-radius: 14px;
+  perspective: 700px;
+  border-radius: var(--radius);
 }
-
 .card:focus {
-  outline: 3px solid var(--accent4);
-  outline-offset: 4px;
+  outline: 2px solid var(--gold);
+  outline-offset: 5px;
 }
 
 .card-inner {
@@ -262,10 +333,9 @@ main {
   height: 100%;
   position: relative;
   transform-style: preserve-3d;
-  transition: transform .45s cubic-bezier(.4,0,.2,1);
-  border-radius: 14px;
+  transition: transform .5s cubic-bezier(.4,0,.2,1);
+  border-radius: var(--radius);
 }
-
 .card.flipped .card-inner,
 .card.matched .card-inner {
   transform: rotateY(180deg);
@@ -274,173 +344,132 @@ main {
 .card-face {
   position: absolute;
   inset: 0;
-  border-radius: 14px;
+  border-radius: var(--radius);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  border: 1px solid var(--border);
+  border: 1px solid;
   user-select: none;
 }
 
-/* Verso (fechado) */
 .card-back {
-  background: var(--surface2);
-  background-image:
-    radial-gradient(circle at 30% 30%, rgba(123,97,255,.15) 0%, transparent 60%),
-    radial-gradient(circle at 70% 70%, rgba(107,255,184,.08) 0%, transparent 60%);
+  background: var(--surface);
+  border-color: rgba(201,168,76,.2);
+  background-image: radial-gradient(circle at 50% 50%, rgba(201,168,76,.07) 0%, transparent 70%);
 }
-
+.card-back::after {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border-radius: 12px;
+  border: 1px solid rgba(201,168,76,.1);
+}
 .card-back-pattern {
-  font-size: clamp(1.6rem, 4vw, 2.4rem);
-  opacity: .35;
-  filter: grayscale(1);
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  opacity: .2;
+  color: var(--gold);
 }
 
-/* Frente (aberta) */
 .card-front {
   transform: rotateY(180deg);
-  flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   padding: 6px;
 }
-
 .card-emoji {
-  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-size: clamp(1.6rem, 4.5vw, 2.6rem);
   line-height: 1;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,.4));
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,.3));
 }
-
 .card-symbol {
-  font-family: var(--font-mono);
-  font-size: clamp(.55rem, 1.5vw, .75rem);
-  font-weight: 700;
+  font-size: clamp(.5rem, 1.2vw, .68rem);
+  font-weight: 500;
   letter-spacing: 1px;
   text-transform: uppercase;
   line-height: 1;
+  font-family: var(--font-sans);
 }
-
 .card-color-bar {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  border-radius: 0 0 14px 14px;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  border-radius: 0 0 var(--radius) var(--radius);
+  opacity: .85;
 }
 
-/* Estados das cartas */
 .card.matched .card-front {
-  border-color: var(--accent3);
-  box-shadow: 0 0 18px rgba(107,255,184,.3);
+  border-color: rgba(201,168,76,.5);
+  box-shadow: 0 0 20px rgba(201,168,76,.18), inset 0 0 20px rgba(201,168,76,.04);
 }
-
-.card.matched .card-inner { animation: matchPop .35s ease; }
+.card.matched .card-inner { animation: matchPop .4s ease; }
 
 @keyframes matchPop {
   0%   { transform: rotateY(180deg) scale(1); }
-  50%  { transform: rotateY(180deg) scale(1.12); }
+  50%  { transform: rotateY(180deg) scale(1.1); }
   100% { transform: rotateY(180deg) scale(1); }
 }
-
 .card.wrong .card-inner { animation: wrongShake .35s ease; }
 
 @keyframes wrongShake {
   0%, 100% { transform: rotateY(180deg) translateX(0); }
-  25%       { transform: rotateY(180deg) translateX(-6px); }
-  75%       { transform: rotateY(180deg) translateX(6px); }
+  25%       { transform: rotateY(180deg) translateX(-7px); }
+  75%       { transform: rotateY(180deg) translateX(7px); }
 }
 
-/* ========================
-   PAINEL SONORO VISUAL
-======================== */
-.sound-visualizer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  height: 40px;
-  margin: 1.5rem 0;
-  opacity: 0;
-  transition: opacity .3s;
-}
-
-.sound-visualizer.active { opacity: 1; }
-
-.sound-bar {
-  width: 5px;
-  border-radius: 3px;
-  background: var(--accent);
-  animation: soundBar .6s ease-in-out infinite alternate;
-}
-
-.sound-bar:nth-child(1) { height: 12px; animation-delay: 0s;    background: var(--accent2); }
-.sound-bar:nth-child(2) { height: 24px; animation-delay: .1s;   background: var(--accent); }
-.sound-bar:nth-child(3) { height: 36px; animation-delay: .15s;  background: var(--accent3); }
-.sound-bar:nth-child(4) { height: 28px; animation-delay: .05s;  background: var(--accent4); }
-.sound-bar:nth-child(5) { height: 36px; animation-delay: .2s;   background: var(--accent); }
-.sound-bar:nth-child(6) { height: 20px; animation-delay: .1s;   background: var(--accent3); }
-.sound-bar:nth-child(7) { height: 14px; animation-delay: .0s;   background: var(--accent2); }
-
-@keyframes soundBar {
-  from { transform: scaleY(0.3); }
-  to   { transform: scaleY(1.2); }
-}
-
-/* ========================
-   NOME DO SOM ATUAL
-======================== */
-.current-sound-name {
-  text-align: center;
-  font-family: var(--font-mono);
-  font-size: .85rem;
-  color: var(--text-muted);
-  min-height: 1.4rem;
-  margin-bottom: 1.5rem;
-  transition: color .3s;
-}
-
-/* ========================
-   MODAL DE VITÓRIA
-======================== */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.75);
+  background: rgba(20,12,6,.88);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 100;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .35s;
-  backdrop-filter: blur(6px);
+  transition: opacity .4s;
+  backdrop-filter: blur(10px);
 }
-
-.modal-overlay.visible {
-  opacity: 1;
-  pointer-events: all;
-}
+.modal-overlay.visible { opacity: 1; pointer-events: all; }
 
 .modal {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 24px;
+  border: 1px solid rgba(201,168,76,.3);
+  border-radius: 28px;
   padding: 3rem 2.5rem;
-  max-width: 420px;
+  max-width: 400px;
   width: 90%;
   text-align: center;
-  transform: scale(.9);
-  transition: transform .35s;
+  transform: scale(.92) translateY(10px);
+  transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+  position: relative;
+  overflow: hidden;
 }
+.modal::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.modal-overlay.visible .modal { transform: scale(1) translateY(0); }
 
-.modal-overlay.visible .modal { transform: scale(1); }
-
-.modal-emoji { font-size: 4rem; margin-bottom: 1rem; display: block; }
-.modal h2 { font-size: 2rem; font-weight: 800; margin-bottom: .5rem; }
-.modal p  { color: var(--text-muted); margin-bottom: 2rem; font-size: .95rem; }
+.modal-emoji { font-size: 3.5rem; margin-bottom: .75rem; display: block; }
+.modal h2 {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--gold-soft);
+  margin-bottom: .4rem;
+}
+.modal p {
+  color: var(--text-muted);
+  margin-bottom: 1.75rem;
+  font-size: .88rem;
+  font-weight: 300;
+}
 
 .modal-stats {
   display: flex;
@@ -448,29 +477,27 @@ main {
   justify-content: center;
   margin-bottom: 2rem;
 }
-
 .modal-stat {
-  background: var(--surface2);
-  border-radius: 12px;
+  background: var(--bg2);
+  border: 1px solid rgba(201,168,76,.15);
+  border-radius: 14px;
   padding: .75rem 1.25rem;
 }
-
-.modal-stat .stat-n {
+.stat-n {
+  font-family: var(--font-serif);
   font-size: 2rem;
-  font-weight: 800;
-  font-family: var(--font-mono);
-  color: var(--accent3);
+  font-weight: 600;
+  color: var(--gold-soft);
   display: block;
+  line-height: 1;
 }
-.modal-stat .stat-l {
-  font-size: .75rem;
+.stat-l {
+  font-size: .7rem;
   color: var(--text-muted);
-  font-family: var(--font-mono);
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
-/* ========================
-   SR-ONLY
-======================== */
 .sr-only {
   position: absolute;
   width: 1px; height: 1px;
@@ -481,28 +508,21 @@ main {
   border: 0;
 }
 
-/* ========================
-   LIVE REGION
-======================== */
-#game-status {
+#game-status, #game-hint {
   position: absolute;
   left: -9999px;
   height: 1px;
   overflow: hidden;
 }
 
-/* ========================
-   RESPONSIVO
-======================== */
-@media (max-width: 600px) {
-  #game-board {
-    grid-template-columns: repeat(4, var(--card-size));
-    gap: 8px;
-  }
-  :root { --card-size: 70px; }
-  .controls { gap: .6rem; }
-  .scoreboard { margin-left: 0; width: 100%; justify-content: space-between; }
+@media (max-width: 560px) {
+  :root { --card-size: 72px; }
+  header { padding: 1.2rem 1.5rem; }
+  main { padding: 1.5rem 1rem 4rem; }
+  .controls { gap: .5rem; }
+  .scoreboard { margin-left: 0; width: 100%; }
   .score-item { flex: 1; }
+  .game-subtitle { display: none; }
 }
 
 </style>
@@ -511,40 +531,40 @@ main {
 
 <a href="#game-board" class="skip-link">Pular para o jogo</a>
 
-<!-- Live regions para leitores de tela -->
 <div id="game-status" aria-live="assertive" aria-atomic="true"></div>
-<div id="game-hint"   aria-live="polite"    aria-atomic="true" class="sr-only"></div>
+<div id="game-hint"   aria-live="polite"    aria-atomic="true"></div>
 
 <header>
   <a href="index.html" class="logo-back" aria-label="Voltar para Access+">
     <span aria-hidden="true">←</span> Access+
   </a>
-  <h1 class="game-title">SomVis</h1>
+  <div class="header-right">
+    <h1 class="game-title">SomVis</h1>
+    <p class="game-subtitle">Jogo da Memória Acessível</p>
+  </div>
 </header>
 
 <main id="main-content">
 
-  <!-- Instruções -->
   <section class="instructions" aria-labelledby="instrucoes-titulo">
     <h2 id="instrucoes-titulo">Como jogar</h2>
     <p>
       Encontre os pares de cartas que representam o mesmo som. Cada carta tem um
       <strong>emoji</strong>, uma <strong>cor</strong>, um <strong>símbolo</strong> e um
-      <strong>som</strong> — qualquer uma dessas pistas é suficiente para jogar.
-      Clique ou pressione <kbd>Enter</kbd> / <kbd>Espaço</kbd> para virar uma carta.
+      <strong>som</strong> — qualquer pista é suficiente para jogar.
+      Use <kbd>Tab</kbd> para navegar e <kbd>Enter</kbd> ou <kbd>Espaço</kbd> para virar.
     </p>
     <div class="accessibility-badges" aria-label="Recursos de acessibilidade deste jogo">
-      <span class="badge badge-sound" aria-label="Suporte a som">🔊 Áudio</span>
-      <span class="badge badge-visual" aria-label="Suporte visual com emoji e símbolo">👁 Visual</span>
-      <span class="badge badge-color" aria-label="Indicadores por cor e símbolo para daltonismo">◆ Cores + Símbolos</span>
-      <span class="badge badge-aria" aria-label="Compatível com leitores de tela">♿ ARIA</span>
+      <span class="badge badge-sound">🔊 Áudio sintético</span>
+      <span class="badge badge-visual">👁 Visual + Emoji</span>
+      <span class="badge badge-color">◆ Símbolos p/ daltonismo</span>
+      <span class="badge badge-aria">♿ Leitor de tela</span>
     </div>
   </section>
 
-  <!-- Controles -->
   <div class="controls" role="toolbar" aria-label="Controles do jogo">
     <button class="btn btn-primary" id="btn-new-game" aria-label="Iniciar novo jogo">
-      ▶ Novo Jogo
+      ▶ Novo jogo
     </button>
     <button class="btn" id="toggle-sound" aria-pressed="true" aria-label="Som ativado. Clique para desativar">
       🔊 Som ativo
@@ -553,7 +573,6 @@ main {
       ↺ Repetir som
     </button>
 
-    <!-- Placar -->
     <div class="scoreboard" role="status" aria-label="Placar atual">
       <div class="score-item">
         <span class="score-label">Pares</span>
@@ -561,17 +580,16 @@ main {
       </div>
       <div class="score-item">
         <span class="score-label">Erros</span>
-        <span class="score-value" id="score-errors" aria-live="polite" style="color: var(--accent2)">0</span>
+        <span class="score-value" id="score-errors" aria-live="polite" style="color:var(--blush)">0</span>
       </div>
       <div class="score-item">
         <span class="score-label">Jogadas</span>
-        <span class="score-value" id="score-moves" aria-live="polite" style="color: var(--accent4)">0</span>
+        <span class="score-value" id="score-moves" aria-live="polite" style="color:var(--dust)">0</span>
       </div>
     </div>
   </div>
 
-  <!-- Visualizador sonoro (para surdos: mostra barras animadas quando som toca) -->
-  <div class="sound-visualizer" id="sound-visualizer" aria-hidden="true" role="presentation">
+  <div class="sound-visualizer" id="sound-visualizer" aria-hidden="true">
     <div class="sound-bar"></div>
     <div class="sound-bar"></div>
     <div class="sound-bar"></div>
@@ -582,7 +600,10 @@ main {
   </div>
   <div class="current-sound-name" id="current-sound-name" aria-hidden="true"></div>
 
-  <!-- Tabuleiro -->
+  <div class="divider" aria-hidden="true">
+    <span class="divider-gem">◆</span>
+  </div>
+
   <div
     id="game-board"
     role="grid"
@@ -591,12 +612,11 @@ main {
 
 </main>
 
-<!-- Modal de vitória -->
 <div class="modal-overlay" id="modal-victory" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
   <div class="modal">
-    <span class="modal-emoji" aria-hidden="true">🎉</span>
-    <h2 id="modal-title">Você venceu!</h2>
-    <p>Todos os pares foram encontrados. Incrível!</p>
+    <span class="modal-emoji" aria-hidden="true">✨</span>
+    <h2 id="modal-title">Parabéns!</h2>
+    <p>Todos os pares foram encontrados com elegância.</p>
     <div class="modal-stats">
       <div class="modal-stat">
         <span class="stat-n" id="modal-moves">0</span>
@@ -607,99 +627,72 @@ main {
         <span class="stat-l">erros</span>
       </div>
     </div>
-    <button class="btn btn-primary" id="btn-play-again" style="width:100%">
+    <button class="btn btn-primary" id="btn-play-again" style="width:100%;border-radius:14px;padding:.8rem;">
       Jogar novamente
     </button>
   </div>
 </div>
 
 <script>
-/* =====================================================
-   DADOS: 8 sons do cotidiano
-   Cada um tem: emoji, nome, símbolo, cor, tom (Hz), forma de onda
-===================================================== */
 const CARDS_DATA = [
-  { id: 'rain',    emoji: '🌧️', name: 'Chuva',        symbol: '≈≈',  color: '#4A90D9', colorName: 'azul',    freq: 280,  wave: 'sine',     volume: 0.4 },
-  { id: 'bell',    emoji: '🔔', name: 'Sino',         symbol: '◇◇',  color: '#FFD166', colorName: 'amarelo', freq: 880,  wave: 'sine',     volume: 0.35 },
-  { id: 'dog',     emoji: '🐕', name: 'Cachorro',     symbol: '▲▲',  color: '#F4A261', colorName: 'laranja', freq: 440,  wave: 'sawtooth', volume: 0.25 },
-  { id: 'clap',    emoji: '👏', name: 'Palmas',       symbol: '××',  color: '#E76F51', colorName: 'vermelho',freq: 200,  wave: 'square',   volume: 0.3  },
-  { id: 'piano',   emoji: '🎹', name: 'Piano',        symbol: '♩♩',  color: '#9B5DE5', colorName: 'roxo',    freq: 523,  wave: 'sine',     volume: 0.4  },
-  { id: 'frog',    emoji: '🐸', name: 'Sapo',         symbol: '●●',  color: '#6BFFB8', colorName: 'verde',   freq: 160,  wave: 'triangle', volume: 0.3  },
-  { id: 'wind',    emoji: '💨', name: 'Vento',        symbol: '~~~', color: '#A8DADC', colorName: 'ciano',   freq: 320,  wave: 'sine',     volume: 0.25 },
-  { id: 'heart',   emoji: '💓', name: 'Coração',      symbol: '♥♥',  color: '#FF6B6B', colorName: 'rosa',    freq: 60,   wave: 'sine',     volume: 0.5  },
+  { id:'rain',  emoji:'🌧️', name:'Chuva',    symbol:'≈≈',  color:'#7BAFD4', colorName:'azul',      freq:280,  wave:'sine',     volume:0.4  },
+  { id:'bell',  emoji:'🔔', name:'Sino',     symbol:'◇◇',  color:'#C9A84C', colorName:'dourado',   freq:880,  wave:'sine',     volume:0.35 },
+  { id:'dog',   emoji:'🐕', name:'Cachorro', symbol:'▲▲',  color:'#C4897A', colorName:'terracota', freq:440,  wave:'sawtooth', volume:0.25 },
+  { id:'clap',  emoji:'👏', name:'Palmas',   symbol:'××',  color:'#A89070', colorName:'areia',     freq:200,  wave:'square',   volume:0.3  },
+  { id:'piano', emoji:'🎹', name:'Piano',    symbol:'♩♩',  color:'#8FAF8A', colorName:'sage',      freq:523,  wave:'sine',     volume:0.4  },
+  { id:'frog',  emoji:'🐸', name:'Sapo',     symbol:'●●',  color:'#B5CC8E', colorName:'verde',     freq:160,  wave:'triangle', volume:0.3  },
+  { id:'wind',  emoji:'💨', name:'Vento',    symbol:'~~~', color:'#E8C97A', colorName:'creme',     freq:320,  wave:'sine',     volume:0.25 },
+  { id:'heart', emoji:'💓', name:'Coração',  symbol:'♥♥',  color:'#D4A5A5', colorName:'rosa',      freq:60,   wave:'sine',     volume:0.5  },
 ];
 
-/* =====================================================
-   ÁUDIO WEB — gera sons sintéticos (sem arquivos externos)
-===================================================== */
-let audioCtx = null;
-let soundEnabled = true;
-let lastCardData = null;
-let vizTimeout = null;
+let audioCtx=null, soundEnabled=true, lastCardData=null, vizTimeout=null;
+let cards=[], flipped=[], matched=[], moves=0, errors=0, locked=false;
 
 function getAudioCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
   return audioCtx;
 }
 
-function playSound(cardData, duration = 0.6) {
+function playSound(cardData, duration=0.65) {
   if (!soundEnabled) return;
   try {
     const ctx = getAudioCtx();
-    if (ctx.state === 'suspended') ctx.resume();
-
-    const osc  = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc.type      = cardData.wave;
+    if (ctx.state==='suspended') ctx.resume();
+    const osc=ctx.createOscillator(), gain=ctx.createGain();
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.type=cardData.wave;
     osc.frequency.setValueAtTime(cardData.freq, ctx.currentTime);
-
-    // Envelope suave
     gain.gain.setValueAtTime(0, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(cardData.volume, ctx.currentTime + 0.05);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + duration);
-
-    // Para sons graves (coração, sapo) — adiciona segundo oscilador
+    gain.gain.linearRampToValueAtTime(cardData.volume, ctx.currentTime+0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+duration);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime+duration);
     if (cardData.freq < 200) {
-      const osc2 = ctx.createOscillator();
-      const gain2 = ctx.createGain();
-      osc2.connect(gain2);
-      gain2.connect(ctx.destination);
-      osc2.type = 'sine';
-      osc2.frequency.setValueAtTime(cardData.freq * 2, ctx.currentTime);
-      gain2.gain.setValueAtTime(0, ctx.currentTime);
-      gain2.gain.linearRampToValueAtTime(cardData.volume * 0.5, ctx.currentTime + 0.05);
-      gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration * 0.6);
-      osc2.start(ctx.currentTime);
-      osc2.stop(ctx.currentTime + duration);
+      const o2=ctx.createOscillator(), g2=ctx.createGain();
+      o2.connect(g2); g2.connect(ctx.destination);
+      o2.type='sine'; o2.frequency.setValueAtTime(cardData.freq*2, ctx.currentTime);
+      g2.gain.setValueAtTime(0, ctx.currentTime);
+      g2.gain.linearRampToValueAtTime(cardData.volume*0.5, ctx.currentTime+0.05);
+      g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+duration*0.6);
+      o2.start(ctx.currentTime); o2.stop(ctx.currentTime+duration);
     }
-
-  } catch(e) { /* sem suporte a Web Audio */ }
-
+  } catch(e) {}
   showVisualizer(cardData);
 }
 
 function playMatchSound() {
   if (!soundEnabled) return;
   try {
-    const ctx = getAudioCtx();
-    if (ctx.state === 'suspended') ctx.resume();
-    [523, 659, 784].forEach((f, i) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
+    const ctx=getAudioCtx();
+    if (ctx.state==='suspended') ctx.resume();
+    [523,659,784].forEach((f,i) => {
+      const osc=ctx.createOscillator(), gain=ctx.createGain();
       osc.connect(gain); gain.connect(ctx.destination);
-      osc.type = 'sine';
-      osc.frequency.value = f;
-      const t = ctx.currentTime + i * 0.12;
-      gain.gain.setValueAtTime(0, t);
-      gain.gain.linearRampToValueAtTime(0.3, t + 0.03);
-      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-      osc.start(t); osc.stop(t + 0.3);
+      osc.type='sine'; osc.frequency.value=f;
+      const t=ctx.currentTime+i*0.13;
+      gain.gain.setValueAtTime(0,t);
+      gain.gain.linearRampToValueAtTime(0.25,t+0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001,t+0.35);
+      osc.start(t); osc.stop(t+0.35);
     });
   } catch(e) {}
 }
@@ -707,242 +700,175 @@ function playMatchSound() {
 function playWrongSound() {
   if (!soundEnabled) return;
   try {
-    const ctx = getAudioCtx();
-    if (ctx.state === 'suspended') ctx.resume();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
+    const ctx=getAudioCtx();
+    if (ctx.state==='suspended') ctx.resume();
+    const osc=ctx.createOscillator(), gain=ctx.createGain();
     osc.connect(gain); gain.connect(ctx.destination);
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(220, ctx.currentTime);
-    osc.frequency.linearRampToValueAtTime(110, ctx.currentTime + 0.25);
-    gain.gain.setValueAtTime(0.2, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
-    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.25);
+    osc.type='sawtooth';
+    osc.frequency.setValueAtTime(200, ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(100, ctx.currentTime+0.25);
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.25);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime+0.25);
   } catch(e) {}
 }
 
-/* =====================================================
-   VISUALIZADOR SONORO (para surdos verem o som)
-===================================================== */
 function showVisualizer(cardData) {
-  const viz  = document.getElementById('sound-visualizer');
-  const name = document.getElementById('current-sound-name');
+  const viz=document.getElementById('sound-visualizer');
+  const name=document.getElementById('current-sound-name');
   clearTimeout(vizTimeout);
   viz.classList.add('active');
-  name.textContent = `🎵 ${cardData.name} — ${cardData.colorName}`;
-  name.style.color = cardData.color;
-  // Colore as barras com a cor do som
-  viz.querySelectorAll('.sound-bar').forEach((bar, i) => {
-    bar.style.background = cardData.color;
-    bar.style.opacity = 0.6 + (i % 3) * 0.15;
-  });
-  vizTimeout = setTimeout(() => {
+  name.textContent=`${cardData.emoji}  ${cardData.name}  —  ${cardData.colorName}`;
+  name.style.color=cardData.color;
+  viz.querySelectorAll('.sound-bar').forEach(bar => { bar.style.background=cardData.color; });
+  vizTimeout=setTimeout(() => {
     viz.classList.remove('active');
-    name.textContent = '';
-    name.style.color = '';
-    viz.querySelectorAll('.sound-bar').forEach(bar => bar.style.background = '');
-  }, 1800);
+    name.textContent=''; name.style.color='';
+    viz.querySelectorAll('.sound-bar').forEach(bar => bar.style.background='');
+  }, 2000);
 }
 
-/* =====================================================
-   ESTADO DO JOGO
-===================================================== */
-let cards        = [];
-let flipped      = [];
-let matched      = [];
-let moves        = 0;
-let errors       = 0;
-let locked       = false;
-
-function announce(msg, urgent = false) {
-  const el = document.getElementById(urgent ? 'game-status' : 'game-hint');
-  el.textContent = '';
-  requestAnimationFrame(() => { el.textContent = msg; });
+function announce(msg, urgent=false) {
+  const el=document.getElementById(urgent ? 'game-status' : 'game-hint');
+  el.textContent='';
+  requestAnimationFrame(() => { el.textContent=msg; });
 }
 
 function updateScore() {
-  document.getElementById('score-pairs').textContent   = matched.length / 2;
-  document.getElementById('score-errors').textContent  = errors;
-  document.getElementById('score-moves').textContent   = moves;
+  document.getElementById('score-pairs').textContent  = matched.length/2;
+  document.getElementById('score-errors').textContent = errors;
+  document.getElementById('score-moves').textContent  = moves;
 }
 
-/* =====================================================
-   CONSTRUÇÃO DO TABULEIRO
-===================================================== */
 function buildBoard() {
-  const board = document.getElementById('game-board');
-  board.innerHTML = '';
-  flipped = []; matched = []; moves = 0; errors = 0;
+  const board=document.getElementById('game-board');
+  board.innerHTML='';
+  flipped=[]; matched=[]; moves=0; errors=0;
   updateScore();
 
-  // Duplica e embaralha
-  const deck = [...CARDS_DATA, ...CARDS_DATA]
-    .map((c, i) => ({ ...c, uid: `${c.id}-${i}` }))
-    .sort(() => Math.random() - 0.5);
+  const deck=[...CARDS_DATA,...CARDS_DATA]
+    .map((c,i) => ({...c, uid:`${c.id}-${i}`}))
+    .sort(() => Math.random()-.5);
+  cards=deck;
 
-  cards = deck;
+  deck.forEach((data,index) => {
+    const card=document.createElement('div');
+    card.className='card';
+    card.dataset.uid=data.uid;
+    card.dataset.id=data.id;
+    card.setAttribute('role','gridcell');
+    card.setAttribute('tabindex','0');
+    card.setAttribute('aria-label',`Carta ${index+1} de 16. Fechada.`);
+    card.setAttribute('aria-pressed','false');
 
-  deck.forEach((data, index) => {
-    const card = document.createElement('div');
-    card.className   = 'card';
-    card.dataset.uid = data.uid;
-    card.dataset.id  = data.id;
-    card.setAttribute('role', 'gridcell');
-    card.setAttribute('tabindex', '0');
-    card.setAttribute('aria-label', `Carta ${index + 1} de 16. Fechada.`);
-    card.setAttribute('aria-pressed', 'false');
-
-    card.innerHTML = `
+    card.innerHTML=`
       <div class="card-inner" aria-hidden="true">
         <div class="card-face card-back">
-          <span class="card-back-pattern">❓</span>
+          <span class="card-back-pattern">✦</span>
         </div>
-        <div class="card-face card-front" style="background: ${data.color}18; border-color: ${data.color}55;">
+        <div class="card-face card-front" style="background:${data.color}14;border-color:${data.color}40;">
           <span class="card-emoji">${data.emoji}</span>
-          <span class="card-symbol" style="color: ${data.color}">${data.symbol}</span>
-          <div class="card-color-bar" style="background: ${data.color}"></div>
+          <span class="card-symbol" style="color:${data.color}">${data.symbol}</span>
+          <div class="card-color-bar" style="background:${data.color}"></div>
         </div>
       </div>`;
 
-    card.addEventListener('click',   () => handleFlip(card, data));
-    card.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        handleFlip(card, data);
-      }
+    card.addEventListener('click', () => handleFlip(card,data));
+    card.addEventListener('keydown', e => {
+      if (e.key==='Enter'||e.key===' ') { e.preventDefault(); handleFlip(card,data); }
     });
-
     board.appendChild(card);
   });
 
-  announce('Novo jogo iniciado. 16 cartas, 8 pares para encontrar. Use Tab para navegar e Enter para virar.');
+  announce('Novo jogo iniciado. 16 cartas, 8 pares. Use Tab para navegar e Enter para virar.');
 }
 
-/* =====================================================
-   LÓGICA DO FLIP
-===================================================== */
 function handleFlip(cardEl, data) {
-  if (locked) return;
-  if (cardEl.classList.contains('flipped')) return;
-  if (cardEl.classList.contains('matched')) return;
-
-  // Wake audio ctx on first interaction
-  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  if (locked||cardEl.classList.contains('flipped')||cardEl.classList.contains('matched')) return;
+  if (audioCtx&&audioCtx.state==='suspended') audioCtx.resume();
 
   cardEl.classList.add('flipped');
-  cardEl.setAttribute('aria-pressed', 'true');
-  cardEl.setAttribute('aria-label', `Carta virada: ${data.name}. Cor: ${data.colorName}. Símbolo: ${data.symbol}.`);
+  cardEl.setAttribute('aria-pressed','true');
+  cardEl.setAttribute('aria-label',`Carta virada: ${data.name}. Cor: ${data.colorName}. Símbolo: ${data.symbol}.`);
 
   playSound(data);
-  lastCardData = data;
+  lastCardData=data;
   announce(`${data.name}. Cor ${data.colorName}. Símbolo ${data.symbol}.`);
+  flipped.push({el:cardEl, data});
 
-  flipped.push({ el: cardEl, data });
-
-  if (flipped.length === 2) {
-    moves++;
-    updateScore();
-    locked = true;
-    checkMatch();
-  }
+  if (flipped.length===2) { moves++; updateScore(); locked=true; checkMatch(); }
 }
 
 function checkMatch() {
-  const [a, b] = flipped;
-  if (a.data.id === b.data.id) {
-    // PAR ENCONTRADO
+  const [a,b]=flipped;
+  if (a.data.id===b.data.id) {
     setTimeout(() => {
-      a.el.classList.add('matched');
-      b.el.classList.add('matched');
-      a.el.setAttribute('aria-label', `Par encontrado: ${a.data.name}.`);
-      b.el.setAttribute('aria-label', `Par encontrado: ${b.data.name}.`);
-      a.el.setAttribute('tabindex', '-1');
-      b.el.setAttribute('tabindex', '-1');
-      matched.push(a.el, b.el);
-      playMatchSound();
-      updateScore();
-      announce(`Par encontrado! ${a.data.name}. ${matched.length / 2} pares de 8.`);
-      flipped = [];
-      locked = false;
-      if (matched.length === 16) setTimeout(showVictory, 500);
+      a.el.classList.add('matched'); b.el.classList.add('matched');
+      a.el.setAttribute('aria-label',`Par encontrado: ${a.data.name}.`);
+      b.el.setAttribute('aria-label',`Par encontrado: ${b.data.name}.`);
+      a.el.setAttribute('tabindex','-1'); b.el.setAttribute('tabindex','-1');
+      matched.push(a.el,b.el);
+      playMatchSound(); updateScore();
+      announce(`Par encontrado! ${a.data.name}. ${matched.length/2} pares de 8.`);
+      flipped=[]; locked=false;
+      if (matched.length===16) setTimeout(showVictory,600);
     }, 300);
   } else {
-    // ERROU
     setTimeout(() => {
       playWrongSound();
-      a.el.classList.add('wrong');
-      b.el.classList.add('wrong');
+      a.el.classList.add('wrong'); b.el.classList.add('wrong');
       setTimeout(() => {
-        a.el.classList.remove('flipped', 'wrong');
-        b.el.classList.remove('flipped', 'wrong');
-        a.el.setAttribute('aria-pressed', 'false');
-        b.el.setAttribute('aria-pressed', 'false');
-        a.el.setAttribute('aria-label', `Carta fechada.`);
-        b.el.setAttribute('aria-label', `Carta fechada.`);
-        errors++;
-        updateScore();
-        announce(`Não é um par. ${a.data.name} e ${b.data.name} são diferentes. Tente novamente.`, true);
-        flipped = [];
-        locked = false;
-      }, 700);
+        a.el.classList.remove('flipped','wrong'); b.el.classList.remove('flipped','wrong');
+        a.el.setAttribute('aria-pressed','false'); b.el.setAttribute('aria-pressed','false');
+        a.el.setAttribute('aria-label','Carta fechada.'); b.el.setAttribute('aria-label','Carta fechada.');
+        errors++; updateScore();
+        announce(`Não é um par. ${a.data.name} e ${b.data.name} são diferentes.`,true);
+        flipped=[]; locked=false;
+      }, 750);
     }, 300);
   }
 }
 
-/* =====================================================
-   VITÓRIA
-===================================================== */
 function showVictory() {
   document.getElementById('modal-moves').textContent  = moves;
   document.getElementById('modal-errors').textContent = errors;
-  const modal = document.getElementById('modal-victory');
+  const modal=document.getElementById('modal-victory');
   modal.classList.add('visible');
-  modal.setAttribute('aria-hidden', 'false');
+  modal.setAttribute('aria-hidden','false');
   document.getElementById('btn-play-again').focus();
-  announce(`Parabéns! Você completou o jogo em ${moves} jogadas e ${errors} erros.`, true);
+  announce(`Parabéns! Jogo concluído em ${moves} jogadas e ${errors} erros.`,true);
 }
 
 function closeVictory() {
-  const modal = document.getElementById('modal-victory');
+  const modal=document.getElementById('modal-victory');
   modal.classList.remove('visible');
-  modal.setAttribute('aria-hidden', 'true');
+  modal.setAttribute('aria-hidden','true');
   buildBoard();
 }
 
-/* =====================================================
-   CONTROLES
-===================================================== */
 document.getElementById('btn-new-game').addEventListener('click', buildBoard);
 document.getElementById('btn-play-again').addEventListener('click', closeVictory);
 
 document.getElementById('toggle-sound').addEventListener('click', function() {
-  soundEnabled = !soundEnabled;
-  this.setAttribute('aria-pressed', String(soundEnabled));
-  this.textContent      = soundEnabled ? '🔊 Som ativo' : '🔇 Som mudo';
-  this.setAttribute('aria-label', soundEnabled ? 'Som ativado. Clique para desativar' : 'Som desativado. Clique para ativar');
+  soundEnabled=!soundEnabled;
+  this.setAttribute('aria-pressed',String(soundEnabled));
+  this.textContent=soundEnabled ? '🔊 Som ativo' : '🔇 Som mudo';
+  this.setAttribute('aria-label',soundEnabled ? 'Som ativado. Clique para desativar' : 'Som desativado. Clique para ativar');
   announce(soundEnabled ? 'Som ativado' : 'Som desativado');
 });
 
 document.getElementById('btn-replay-sound').addEventListener('click', function() {
-  if (lastCardData) {
-    playSound(lastCardData);
-    announce(`Repetindo: ${lastCardData.name}`);
-  } else {
-    announce('Nenhum som para repetir ainda.');
-  }
+  if (lastCardData) { playSound(lastCardData); announce(`Repetindo: ${lastCardData.name}`); }
+  else announce('Nenhum som para repetir ainda.');
 });
 
-// Fecha modal com Escape
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    const modal = document.getElementById('modal-victory');
+  if (e.key==='Escape') {
+    const modal=document.getElementById('modal-victory');
     if (modal.classList.contains('visible')) closeVictory();
   }
 });
 
-/* =====================================================
-   INICIAR
-===================================================== */
 buildBoard();
 </script>
 </body>
