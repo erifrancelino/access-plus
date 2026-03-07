@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xadrez das Maravilhas — Xadrez Acessível | Access+</title>
+<meta name="description" content="Jogo de xadrez acessível com narração completa para pessoas cegas. Inspirado em Alice no País das Maravilhas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=IM+Fell+English:ital@0;1&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+
+/* ========================
+   VARIÁVEIS
+======================== */
+:root {
+  --bg:          #0A0608;
+  --bg2:         #110D0F;
+  --surface:     #1A1218;
+  --surface2:    #221820;
+  --border:      #3D2535;
+  --red:         #8B1A2A;
+  --red-soft:    #C4364C;
+  --red-bright:  #E8526A;
+  --gold:        #C9A84C;
+  --gold-soft:   #E8C97A;
+  --white-piece: #F5EDD8;
+  --black-piece: #1A0F14;
+  --sq-light:    #2A1A22;
+  --sq-dark:     #160F14;
+  --sq-selected: #5C1A2A;
+  --sq-possible: #3D4A1A;
+  --sq-last:     #3D2A10;
+  --text:        #E8D4C0;
+  --text-muted:  #8B7060;
+  --cream:       #F0E0C8;
+  --radius:      4px;
+  --font-display: 'UnifrakturMaguntia', cursive;
+  --font-serif:   'IM Fell English', Georgia, serif;
+  --font-body:    'Crimson Pro', Georgia, serif;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.6;
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(139,26,42,.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(201,168,76,.06) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C9A84C' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ========================
+   SKIP LINK
+======================== */
+.skip-link {
+  position: absolute;
+  top: -60px; left: 1.5rem;
+  background: var(--red);
+  color: var(--cream);
+  padding: .5rem 1.2rem;
+  border-radius: 2px;
+  text-decoration: none;
+  font-family: var(--font-serif);
+  font-size: .85rem;
+  z-index: 999;
+  transition: top .3s;
+  border: 1px solid var(--red-soft);
+}
+.skip-link:focus { top: 1rem; }
+
+/* ========================
+   HEADER
+======================== */
+header {
+  padding: 1.2rem 2rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: rgba(10,6,8,.9);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.logo-back {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-family: var(--font-serif);
+  font-size: .82rem;
+  font-style: italic;
+  transition: color .2s;
+}
+.logo-back:hover { color: var(--gold-soft); }
+.logo-back:focus { outline: 2px solid var(--red-soft); outline-offset: 4px; }
+
+.header-title {
+  text-align: center;
+  flex: 1;
+}
+
+.game-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 4vw, 2.4rem);
+  color: var(--red-soft);
+  letter-spacing: 2px;
+  text-shadow: 0 0 30px rgba(196,54,76,.4), 0 2px 4px rgba(0,0,0,.8);
+  line-height: 1.1;
+}
+
+.game-subtitle {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: .78rem;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  margin-top: .1rem;
+}
+
+/* ========================
+   BARRA ACESSIBILIDADE
+======================== */
+.a11y-bar {
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  padding: .5rem 2rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .6rem;
+}
+
+.a11y-label {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: .7rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.a11y-sep {
+  width: 1px; height: 14px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+.btn-a11y {
+  font-family: var(--font-serif);
+  font-size: .75rem;
+  padding: .28rem .85rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all .2s;
+  background: transparent;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.btn-a11y:hover { border-color: var(--red-soft); color: var(--red-bright); }
+.btn-a11y:focus { outline: 2px solid var(--red-soft); outline-offset: 2px; }
+.btn-a11y[aria-pressed="true"] { background: rgba(139,26,42,.2); border-color: var(--red-soft); color: var(--red-bright); }
+
+.fonte-bar { display:flex; gap:.3rem; align-items:center; }
+.fonte-bar .btn-a11y { padding:.28rem .55rem; font-weight:600; min-width:1.8rem; text-align:center; }
+.fonte-bar .btn-a11y:disabled { opacity:.3; cursor:not-allowed; }
+
+.colorblind-sel {
+  font-family: var(--font-serif);
+  font-size: .75rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: .28rem .6rem;
+  border-radius: 2px;
+  cursor: pointer;
+}
+.colorblind-sel:focus { outline: 2px solid var(--red-soft); outline-offset: 2px; }
+
+/* ========================
+   MAIN LAYOUT
+======================== */
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* ========================
+   PAINEL ESQUERDO
+======================== */
+.panel-left { display: flex; flex-direction: column; gap: 1.2rem; }
+
+.card-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.4rem;
+  position: relative;
+  overflow: hidden;
+}
+.card-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--red), transparent);
+}
+
+.panel-title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: .75rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--red-soft);
+  margin-bottom: .8rem;
+}
+
+/* Capturadas */
+.captured-pieces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem;
+  min-height: 2rem;
+}
+.captured-piece {
+  font-size: 1.3rem;
+  opacity: .7;
+  filter: grayscale(.3);
+}
+
+/* Histórico de movimentos */
+.move-log {
+  max-height: 200px;
+  overflow-y: auto;
+  font-family: var(--font-body);
+  font-size: .85rem;
+  line-height: 2;
+  color: var(--text-muted);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+.move-log-entry { display: flex; gap: .8rem; padding: .1rem 0; }
+.move-log-entry:last-child { color: var(--gold-soft); }
+.move-num { color: var(--text-muted); min-width: 1.5rem; font-style: italic; }
+.move-white { color: var(--white-piece); }
+.move-black { color: var(--text-muted); }
+
+/* Status */
+.status-box {
+  font-family: var(--font-serif);
+  font-size: .95rem;
+  padding: .6rem .8rem;
+  background: var(--surface2);
+  border-left: 2px solid var(--red);
+  color: var(--cream);
+  font-style: italic;
+  line-height: 1.4;
+  min-height: 2.5rem;
+}
+
+/* ========================
+   TABULEIRO
+======================== */
+.board-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .4rem;
+}
+
+.board-coords-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.coord-letter {
+  font-family: var(--font-serif);
+  font-size: .65rem;
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+  width: var(--sq);
+}
+
+.board-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.coord-number {
+  font-family: var(--font-serif);
+  font-size: .65rem;
+  color: var(--text-muted);
+  font-style: italic;
+  width: 1.2rem;
+  text-align: right;
+  padding-right: .3rem;
+  flex-shrink: 0;
+}
+
+#chess-board {
+  display: grid;
+  grid-template-columns: repeat(8, var(--sq));
+  grid-template-rows: repeat(8, var(--sq));
+  border: 2px solid var(--border);
+  box-shadow:
+    0 0 0 1px var(--red),
+    0 0 40px rgba(139,26,42,.3),
+    0 20px 60px rgba(0,0,0,.8);
+  position: relative;
+  --sq: clamp(44px, 7vw, 68px);
+}
+
+/* Efeito de névoa nas bordas do tabuleiro */
+#chess-board::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(ellipse at center, transparent 60%, var(--bg) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.square {
+  width: var(--sq);
+  height: var(--sq);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  transition: background-color .15s;
+  font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+  user-select: none;
+}
+
+.square:focus {
+  outline: 3px solid var(--gold);
+  outline-offset: -3px;
+  z-index: 3;
+}
+
+.square.light { background-color: var(--sq-light); }
+.square.dark  { background-color: var(--sq-dark); }
+
+.square.selected {
+  background-color: var(--sq-selected) !important;
+  box-shadow: inset 0 0 0 3px var(--red-bright);
+}
+
+.square.possible-move {
+  position: relative;
+}
+.square.possible-move::after {
+  content: '';
+  position: absolute;
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  background: rgba(107,160,50,.6);
+  pointer-events: none;
+  z-index: 1;
+}
+.square.possible-move.has-piece::after {
+  width: 90%; height: 90%;
+  border-radius: 0;
+  background: transparent;
+  border: 3px solid rgba(107,160,50,.7);
+}
+
+.square.last-move {
+  background-color: var(--sq-last) !important;
+}
+
+.square.in-check {
+  background-color: rgba(200,30,30,.4) !important;
+  animation: checkPulse 1s ease-in-out infinite;
+}
+
+@keyframes checkPulse {
+  0%, 100% { background-color: rgba(200,30,30,.4) !important; }
+  50%       { background-color: rgba(200,30,30,.7) !important; }
+}
+
+.piece {
+  position: relative;
+  z-index: 1;
+  line-height: 1;
+  text-shadow: 0 2px 4px rgba(0,0,0,.8);
+  transition: transform .1s;
+  pointer-events: none;
+}
+.square:hover .piece { transform: scale(1.08); }
+
+/* ========================
+   PAINEL DIREITO
+======================== */
+.panel-right { display: flex; flex-direction: column; gap: 1.2rem; }
+
+/* Controles do jogo */
+.game-controls {
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+}
+
+.btn-game {
+  font-family: var(--font-serif);
+  font-size: .88rem;
+  padding: .65rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all .25s;
+  background: var(--surface);
+  color: var(--text);
+  text-align: left;
+  font-style: italic;
+  width: 100%;
+}
+.btn-game:hover { border-color: var(--red-soft); background: var(--surface2); color: var(--red-bright); }
+.btn-game:focus { outline: 2px solid var(--red-soft); outline-offset: 2px; }
+
+.btn-game.primary {
+  background: linear-gradient(135deg, var(--red), #5C0F1A);
+  border-color: var(--red-soft);
+  color: var(--cream);
+  font-style: normal;
+  text-align: center;
+  font-weight: 400;
+  letter-spacing: .5px;
+}
+.btn-game.primary:hover { background: linear-gradient(135deg, var(--red-soft), var(--red)); }
+
+/* Legenda de peças */
+.pieces-legend {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  font-family: var(--font-body);
+  font-size: .82rem;
+  color: var(--text-muted);
+}
+.legend-piece { font-size: 1.2rem; width: 1.6rem; text-align: center; }
+.legend-name { font-style: italic; }
+
+/* Turno */
+.turn-indicator {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  padding: .7rem 1rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.turn-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 2px solid var(--border);
+}
+.turn-dot.white { background: var(--white-piece); }
+.turn-dot.black { background: var(--black-piece); border-color: var(--text-muted); }
+.turn-text {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: .88rem;
+  color: var(--cream);
+}
+
+/* ========================
+   DECORAÇÃO ALICE
+======================== */
+.alice-quote {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: .8rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: .6rem 1rem;
+  border-top: 1px solid var(--border);
+  line-height: 1.5;
+}
+
+/* Corações decorativos */
+.hearts-deco {
+  display: flex;
+  justify-content: center;
+  gap: .6rem;
+  font-size: .9rem;
+  opacity: .25;
+  margin-bottom: .3rem;
+}
+
+/* ========================
+   MODAL
+======================== */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(5,2,4,.9);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100;
+  opacity: 0; pointer-events: none;
+  transition: opacity .4s;
+  backdrop-filter: blur(8px);
+}
+.modal-overlay.visible { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--red);
+  border-radius: var(--radius);
+  padding: 2.5rem 2rem;
+  max-width: 380px;
+  width: 90%;
+  text-align: center;
+  transform: scale(.92);
+  transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 60px rgba(139,26,42,.4);
+}
+.modal::before {
+  content: '';
+  position: absolute;
+  top:0; left:0; right:0; height:2px;
+  background: linear-gradient(90deg, transparent, var(--red-bright), transparent);
+}
+.modal-overlay.visible .modal { transform: scale(1); }
+
+.modal-crown { font-size: 3rem; margin-bottom: .5rem; display: block; }
+.modal h2 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--red-bright);
+  margin-bottom: .5rem;
+  text-shadow: 0 0 20px rgba(232,82,106,.4);
+}
+.modal p {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+  font-size: .9rem;
+}
+
+/* ========================
+   SR-ONLY & LIVE
+======================== */
+.sr-only {
+  position:absolute; width:1px; height:1px;
+  padding:0; margin:-1px; overflow:hidden;
+  clip:rect(0,0,0,0); white-space:nowrap; border:0;
+}
+#narration, #chess-status {
+  position:absolute; left:-9999px; height:1px; overflow:hidden;
+}
+
+/* ========================
+   DALTONISMO
+======================== */
+html.protanopia   { filter: saturate(0%) sepia(100%) hue-rotate(295deg) saturate(300%) brightness(90%); }
+html.deuteranopia { filter: saturate(0%) sepia(100%) hue-rotate(120deg) saturate(250%) brightness(90%); }
+html.tritanopia   { filter: saturate(0%) sepia(100%) hue-rotate(180deg) saturate(200%) brightness(90%); }
+
+/* ========================
+   ALTO CONTRASTE
+======================== */
+.high-contrast body { background:#000 !important; color:#fff !important; }
+.high-contrast * { border-color:#555 !important; }
+.high-contrast .square.light { background:#222 !important; }
+.high-contrast .square.dark  { background:#000 !important; }
+.high-contrast .square.selected { background:#600 !important; box-shadow: inset 0 0 0 3px #f00 !important; }
+.high-contrast .square.possible-move::after { background:rgba(0,255,0,.5) !important; }
+.high-contrast .card-panel,
+.high-contrast .turn-indicator { background:#111 !important; }
+.high-contrast .btn-game,
+.high-contrast .btn-a11y { background:#111 !important; color:#fff !important; border-color:#fff !important; }
+.high-contrast .game-title { color:#f55 !important; }
+
+/* ========================
+   RESPONSIVO
+======================== */
+@media (max-width: 900px) {
+  main {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+  .panel-left { order: 2; }
+  .board-container { order: 1; }
+  .panel-right { order: 3; }
+  #chess-board { --sq: clamp(38px, 11vw, 58px); }
+}
+
+@media (max-width: 480px) {
+  main { padding: 1rem .75rem 3rem; gap: 1.2rem; }
+  header { padding: 1rem 1.2rem; }
+  .a11y-bar { padding: .4rem 1.2rem; }
+  .game-title { font-size: 1.4rem; }
+}
+
+</style>
+</head>
+<body>
+
+<a href="#chess-board" class="skip-link">Pular para o tabuleiro</a>
+
+<!-- ARIA live regions -->
+<div id="narration"    aria-live="assertive" aria-atomic="true"></div>
+<div id="chess-status" aria-live="polite"    aria-atomic="true"></div>
+
+<header>
+  <a href="index.html" class="logo-back" aria-label="Voltar para Access+">← Access+</a>
+  <div class="header-title">
+    <h1 class="game-title">Xadrez das Maravilhas</h1>
+    <p class="game-subtitle">— Accessible Chess —</p>
+  </div>
+  <div style="width:80px"></div>
+</header>
+
+<!-- Barra de acessibilidade -->
+<div class="a11y-bar" role="toolbar" aria-label="Controles de acessibilidade">
+  <span class="a11y-label" aria-hidden="true">Acessibilidade</span>
+  <div class="a11y-sep" aria-hidden="true"></div>
+  <button class="btn-a11y" id="btn-contrast" aria-pressed="false" aria-label="Ativar alto contraste">◐ Contraste</button>
+  <div class="a11y-sep" aria-hidden="true"></div>
+  <button class="btn-a11y" id="btn-narration" aria-pressed="true" aria-label="Narração ativada">🔊 Narração</button>
+  <div class="a11y-sep" aria-hidden="true"></div>
+  <button class="btn-a11y" id="btn-tts" aria-pressed="false" aria-label="Ler página em voz alta">📖 Ler página</button>
+  <div class="a11y-sep" aria-hidden="true"></div>
+  <div class="fonte-bar" role="group" aria-label="Tamanho da fonte">
+    <button class="btn-a11y" id="btn-fa" aria-label="Aumentar fonte">A+</button>
+    <button class="btn-a11y" id="btn-fd" aria-label="Diminuir fonte">A-</button>
+  </div>
+  <div class="a11y-sep" aria-hidden="true"></div>
+  <div style="display:flex;align-items:center;gap:.4rem;">
+    <label for="sel-color" class="a11y-label">Daltonismo:</label>
+    <select id="sel-color" class="colorblind-sel" aria-label="Simular daltonismo">
+      <option value="normal">Normal</option>
+      <option value="protanopia">Protanopia</option>
+      <option value="deuteranopia">Deuteranopia</option>
+      <option value="tritanopia">Tritanopia</option>
+    </select>
+  </div>
+</div>
+
+<main id="main-content">
+
+  <!-- PAINEL ESQUERDO -->
+  <aside class="panel-left" aria-label="Informações do jogo">
+
+    <!-- Turno -->
+    <div class="turn-indicator" id="turn-indicator" role="status" aria-live="polite" aria-label="Turno atual">
+      <div class="turn-dot white" id="turn-dot"></div>
+      <span class="turn-text" id="turn-text">Vez das Brancas</span>
+    </div>
+
+    <!-- Status -->
+    <div class="card-panel">
+      <p class="panel-title">Situação</p>
+      <div class="status-box" id="status-box" role="status" aria-live="polite">
+        Selecione uma peça para começar.
+      </div>
+    </div>
+
+    <!-- Peças capturadas brancas -->
+    <div class="card-panel">
+      <p class="panel-title">Capturadas pelas Brancas</p>
+      <div class="captured-pieces" id="captured-white" aria-label="Peças capturadas pelas brancas" aria-live="polite"></div>
+    </div>
+
+    <!-- Peças capturadas pretas -->
+    <div class="card-panel">
+      <p class="panel-title">Capturadas pelas Pretas</p>
+      <div class="captured-pieces" id="captured-black" aria-label="Peças capturadas pelas pretas" aria-live="polite"></div>
+    </div>
+
+    <!-- Histórico -->
+    <div class="card-panel">
+      <p class="panel-title">Histórico de Movimentos</p>
+      <div class="move-log" id="move-log" role="log" aria-label="Histórico de movimentos" aria-live="polite"></div>
+    </div>
+
+  </aside>
+
+  <!-- TABULEIRO -->
+  <div class="board-container">
+
+    <div class="hearts-deco" aria-hidden="true">♥ ♠ ♥ ♠ ♥ ♠ ♥ ♠ ♥</div>
+
+    <div class="board-coords-row" aria-hidden="true" id="col-coords"></div>
+
+    <div id="board-rows-wrapper" style="display:flex; flex-direction:column; gap:0;">
+      <!-- Rows geradas pelo JS -->
+    </div>
+
+    <div class="board-coords-row" aria-hidden="true" id="col-coords-bottom"></div>
+
+    <div class="alice-quote" aria-hidden="true">
+      "It's a great huge game of chess that's being played — all over the world."
+    </div>
+
+  </div>
+
+  <!-- PAINEL DIREITO -->
+  <aside class="panel-right" aria-label="Controles e legenda">
+
+    <div class="card-panel">
+      <p class="panel-title">Controles</p>
+      <div class="game-controls">
+        <button class="btn-game primary" id="btn-new-game">♟ Nova Partida</button>
+        <button class="btn-game" id="btn-undo" aria-label="Desfazer último movimento">↺ Desfazer movimento</button>
+        <button class="btn-game" id="btn-flip" aria-label="Girar tabuleiro">⇅ Girar tabuleiro</button>
+        <button class="btn-game" id="btn-read-board" aria-label="Ler posição atual do tabuleiro">🔊 Ler tabuleiro</button>
+        <button class="btn-game" id="btn-read-piece" aria-label="Ler movimentos possíveis da peça selecionada">♟ Ler movimentos</button>
+      </div>
+    </div>
+
+    <div class="card-panel">
+      <p class="panel-title">Legenda das Peças</p>
+      <div class="pieces-legend" aria-label="Legenda de peças e seus símbolos">
+        <div class="legend-row"><span class="legend-piece">♔</span><span class="legend-name">Rei (branco)</span></div>
+        <div class="legend-row"><span class="legend-piece">♕</span><span class="legend-name">Rainha (branca)</span></div>
+        <div class="legend-row"><span class="legend-piece">♖</span><span class="legend-name">Torre (branca)</span></div>
+        <div class="legend-row"><span class="legend-piece">♗</span><span class="legend-name">Bispo (branco)</span></div>
+        <div class="legend-row"><span class="legend-piece">♘</span><span class="legend-name">Cavalo (branco)</span></div>
+        <div class="legend-row"><span class="legend-piece">♙</span><span class="legend-name">Peão (branco)</span></div>
+        <div class="legend-row"><span class="legend-piece">♚</span><span class="legend-name">Rei (preto)</span></div>
+        <div class="legend-row"><span class="legend-piece">♛</span><span class="legend-name">Rainha (preta)</span></div>
+        <div class="legend-row"><span class="legend-piece">♜</span><span class="legend-name">Torre (preta)</span></div>
+        <div class="legend-row"><span class="legend-piece">♝</span><span class="legend-name">Bispo (preto)</span></div>
+        <div class="legend-row"><span class="legend-piece">♞</span><span class="legend-name">Cavalo (preto)</span></div>
+        <div class="legend-row"><span class="legend-piece">♟</span><span class="legend-name">Peão (preto)</span></div>
+      </div>
+    </div>
+
+    <div class="card-panel">
+      <p class="panel-title">Navegação por Teclado</p>
+      <div style="font-size:.82rem;color:var(--text-muted);font-family:var(--font-body);line-height:1.8;">
+        <div><kbd style="background:var(--surface2);border:1px solid var(--border);padding:.1rem .3rem;border-radius:2px;font-size:.75rem;">Tab</kbd> Navegar entre casas</div>
+        <div><kbd style="background:var(--surface2);border:1px solid var(--border);padding:.1rem .3rem;border-radius:2px;font-size:.75rem;">Enter</kbd> Selecionar / Mover</div>
+        <div><kbd style="background:var(--surface2);border:1px solid var(--border);padding:.1rem .3rem;border-radius:2px;font-size:.75rem;">Esc</kbd> Cancelar seleção</div>
+        <div><kbd style="background:var(--surface2);border:1px solid var(--border);padding:.1rem .3rem;border-radius:2px;font-size:.75rem;">Setas</kbd> Mover pelo tabuleiro</div>
+      </div>
+    </div>
+
+  </aside>
+
+</main>
+
+<!-- Modal fim de jogo -->
+<div class="modal-overlay" id="modal-end" role="dialog" aria-modal="true" aria-labelledby="modal-end-title" aria-hidden="true">
+  <div class="modal">
+    <span class="modal-crown" aria-hidden="true" id="modal-icon">👑</span>
+    <h2 id="modal-end-title">Xeque-Mate!</h2>
+    <p id="modal-end-msg">As Brancas vencem. Off with their heads!</p>
+    <button class="btn-game primary" id="btn-modal-new" style="margin-top:.5rem;">♟ Nova Partida</button>
+  </div>
+</div>
+
+<script>
+/* =====================================================
+   MOTOR DE XADREZ ACESSÍVEL
+   - Xadrez completo com regras básicas
+   - Narração em PT-BR via SpeechSynthesis
+   - Navegação por teclado com setas
+   - ARIA labels dinâmicos em cada casa
+===================================================== */
+
+// ---- CONSTANTES ----
+const PIECES = {
+  wK:'♔', wQ:'♕', wR:'♖', wB:'♗', wN:'♘', wP:'♙',
+  bK:'♚', bQ:'♛', bR:'♜', bB:'♝', bN:'♞', bP:'♟',
+};
+const PIECE_NAMES = {
+  K:'Rei', Q:'Rainha', R:'Torre', B:'Bispo', N:'Cavalo', P:'Peão'
+};
+const FILES = ['a','b','c','d','e','f','g','h'];
+const RANKS = ['8','7','6','5','4','3','2','1'];
+
+// Estado inicial
+const INIT_BOARD = [
+  ['bR','bN','bB','bQ','bK','bB','bN','bR'],
+  ['bP','bP','bP','bP','bP','bP','bP','bP'],
+  [null,null,null,null,null,null,null,null],
+  [null,null,null,null,null,null,null,null],
+  [null,null,null,null,null,null,null,null],
+  [null,null,null,null,null,null,null,null],
+  ['wP','wP','wP','wP','wP','wP','wP','wP'],
+  ['wR','wN','wB','wQ','wK','wB','wN','wR'],
+];
+
+// ---- ESTADO DO JOGO ----
+let board = [], turn = 'w', selected = null, possibleMoves = [];
+let capturedWhite = [], capturedBlack = [];
+let moveHistory = [], boardHistory = [];
+let flipped = false;
+let narrationOn = true;
+let kingPos = { w: [7,4], b: [0,4] };
+let gameOver = false;
+let focusedSquare = [7,4]; // linha, coluna
+
+// ---- INICIALIZAR ----
+function initGame() {
+  board = INIT_BOARD.map(row => [...row]);
+  turn = 'w'; selected = null; possibleMoves = [];
+  capturedWhite = []; capturedBlack = [];
+  moveHistory = []; boardHistory = [];
+  gameOver = false;
+  kingPos = { w:[7,4], b:[0,4] };
+  focusedSquare = [7,4];
+  renderBoard();
+  updateStatus('Nova partida iniciada. Vez das Brancas. Use Tab e Enter para jogar, ou Setas para navegar.');
+  updateTurnIndicator();
+  updateCaptured();
+  updateMoveLog();
+  closeModal();
+  narrate('Nova partida de Xadrez das Maravilhas iniciada. Vez das Brancas.');
+}
+
+// ---- RENDERIZAR TABULEIRO ----
+function renderBoard() {
+  const wrapper = document.getElementById('board-rows-wrapper');
+  wrapper.innerHTML = '';
+
+  // Coordenadas de coluna
+  const topCoords = document.getElementById('col-coords');
+  const botCoords = document.getElementById('col-coords-bottom');
+  topCoords.innerHTML = '<div style="width:1.2rem"></div>';
+  botCoords.innerHTML = '<div style="width:1.2rem"></div>';
+
+  const fileOrder = flipped ? [...FILES].reverse() : FILES;
+  fileOrder.forEach(f => {
+    ['col-coords','col-coords-bottom'].forEach(id => {
+      const d = document.createElement('div');
+      d.className = 'coord-letter';
+      d.textContent = f;
+      document.getElementById(id).appendChild(d);
+    });
+  });
+
+  const rankOrder = flipped ? [...RANKS].reverse() : RANKS;
+  const fileIdx   = flipped ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
+
+  rankOrder.forEach((rank, ri) => {
+    const row = document.createElement('div');
+    row.className = 'board-row';
+
+    const coordN = document.createElement('div');
+    coordN.className = 'coord-number';
+    coordN.textContent = rank;
+    coordN.setAttribute('aria-hidden','true');
+    row.appendChild(coordN);
+
+    fileIdx.forEach((fi, ci) => {
+      const realRank = flipped ? 7 - ri : ri;
+      const realFile = fi;
+      const piece = board[realRank][realFile];
+      const isLight = (realRank + realFile) % 2 === 0;
+      const sqName  = FILES[realFile] + RANKS[realRank];
+
+      const sq = document.createElement('div');
+      sq.className = 'square ' + (isLight ? 'light' : 'dark');
+      sq.dataset.row = realRank;
+      sq.dataset.col = realFile;
+      sq.id = 'sq-' + realRank + '-' + realFile;
+      sq.setAttribute('tabindex', '0');
+      sq.setAttribute('role', 'gridcell');
+
+      // ARIA label descritivo para leitores de tela
+      let ariaLabel = `Casa ${sqName}`;
+      if (piece) {
+        const color = piece[0]==='w' ? 'Branco' : 'Preto';
+        ariaLabel += `, ${color} ${PIECE_NAMES[piece[1]]}`;
+      } else {
+        ariaLabel += ', vazia';
+      }
+      sq.setAttribute('aria-label', ariaLabel);
+
+      // Classes de estado
+      if (selected && selected[0]===realRank && selected[1]===realFile) sq.classList.add('selected');
+      if (possibleMoves.some(m=>m[0]===realRank&&m[1]===realFile)) {
+        sq.classList.add('possible-move');
+        if (piece) sq.classList.add('has-piece');
+      }
+      const last = moveHistory[moveHistory.length-1];
+      if (last && ((last.from[0]===realRank&&last.from[1]===realFile)||(last.to[0]===realRank&&last.to[1]===realFile))) {
+        sq.classList.add('last-move');
+      }
+      // Check indicator
+      if (piece && piece[1]==='K') {
+        if (isInCheck(piece[0])) sq.classList.add('in-check');
+      }
+
+      if (piece) {
+        const p = document.createElement('span');
+        p.className = 'piece';
+        p.textContent = PIECES[piece];
+        p.setAttribute('aria-hidden','true');
+        sq.appendChild(p);
+      }
+
+      sq.addEventListener('click', () => handleSquareClick(realRank, realFile));
+      sq.addEventListener('keydown', e => handleSquareKey(e, realRank, realFile));
+
+      row.appendChild(sq);
+    });
+    wrapper.appendChild(row);
+  });
+}
+
+// ---- CLIQUE/TECLADO NA CASA ----
+function handleSquareKey(e, row, col) {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    handleSquareClick(row, col);
+    return;
+  }
+  if (e.key === 'Escape') {
+    selected = null; possibleMoves = [];
+    renderBoard();
+    narrate('Seleção cancelada.');
+    return;
+  }
+  // Navegação por setas
+  let [nr, nc] = [row, col];
+  if (e.key==='ArrowUp')    nr = flipped ? row+1 : row-1;
+  if (e.key==='ArrowDown')  nr = flipped ? row-1 : row+1;
+  if (e.key==='ArrowLeft')  nc = flipped ? col+1 : col-1;
+  if (e.key==='ArrowRight') nc = flipped ? col-1 : col+1;
+  if (nr>=0&&nr<=7&&nc>=0&&nc<=7) {
+    e.preventDefault();
+    const target = document.getElementById(`sq-${nr}-${nc}`);
+    if (target) {
+      target.focus();
+      focusedSquare = [nr, nc];
+      const piece = board[nr][nc];
+      const sqName = FILES[nc] + RANKS[nr];
+      if (piece) {
+        const color = piece[0]==='w' ? 'Branco' : 'Preto';
+        narrate(`${sqName}: ${color} ${PIECE_NAMES[piece[1]]}`);
+      } else {
+        narrate(`${sqName}: vazia`);
+      }
+    }
+  }
+}
+
+function handleSquareClick(row, col) {
+  if (gameOver) return;
+  const piece = board[row][col];
+  const sqName = FILES[col] + RANKS[row];
+
+  if (selected) {
+    // Tentar mover
+    const isValid = possibleMoves.some(m => m[0]===row && m[1]===col);
+    if (isValid) {
+      executeMove(selected[0], selected[1], row, col);
+      selected = null; possibleMoves = [];
+      return;
+    }
+    // Selecionar outra peça do mesmo time
+    if (piece && piece[0]===turn) {
+      selectPiece(row, col);
+      return;
+    }
+    // Desselecionar
+    selected = null; possibleMoves = [];
+    renderBoard();
+    narrate('Seleção cancelada.');
+    return;
+  }
+
+  if (!piece) {
+    narrate(`${sqName}: casa vazia.`);
+    return;
+  }
+  if (piece[0] !== turn) {
+    const color = piece[0]==='w' ? 'Branca' : 'Preta';
+    narrate(`${sqName}: ${color} ${PIECE_NAMES[piece[1]]}. Não é sua vez.`);
+    return;
+  }
+  selectPiece(row, col);
+}
+
+function selectPiece(row, col) {
+  const piece = board[row][col];
+  const sqName = FILES[col] + RANKS[row];
+  selected = [row, col];
+  possibleMoves = getLegalMoves(row, col);
+  renderBoard();
+  focusSq(row, col);
+
+  const color = piece[0]==='w' ? 'Branca' : 'Preta';
+  const moveNames = possibleMoves.map(m => FILES[m[1]] + RANKS[m[0]]).join(', ');
+  const moveTxt = possibleMoves.length > 0
+    ? `${possibleMoves.length} movimento${possibleMoves.length>1?'s':''} possíve${possibleMoves.length>1?'is':'l'}: ${moveNames}`
+    : 'sem movimentos possíveis';
+
+  narrate(`${color} ${PIECE_NAMES[piece[1]]} em ${sqName}. ${moveTxt}.`);
+  updateStatus(`${color} ${PIECE_NAMES[piece[1]]} selecionada em ${sqName}. ${moveTxt}.`);
+}
+
+function focusSq(row, col) {
+  setTimeout(() => {
+    const sq = document.getElementById(`sq-${row}-${col}`);
+    if (sq) sq.focus();
+  }, 30);
+}
+
+// ---- EXECUTAR MOVIMENTO ----
+function executeMove(fromR, fromC, toR, toC) {
+  boardHistory.push(board.map(r=>[...r]));
+  const piece = board[fromR][fromC];
+  const captured = board[toR][toC];
+  const fromName = FILES[fromC] + RANKS[fromR];
+  const toName   = FILES[toC]   + RANKS[toR];
+  const color    = piece[0]==='w' ? 'Branca' : 'Preta';
+
+  // Captura
+  if (captured) {
+    if (captured[0]==='w') capturedBlack.push(captured);
+    else capturedWhite.push(captured);
+  }
+
+  // Executar
+  board[toR][toC] = piece;
+  board[fromR][fromC] = null;
+
+  // Atualizar posição do rei
+  if (piece[1]==='K') kingPos[piece[0]] = [toR, toC];
+
+  // Promoção de peão
+  if (piece[1]==='P') {
+    if (piece[0]==='w' && toR===0) { board[toR][toC]='wQ'; }
+    if (piece[0]==='b' && toR===7) { board[toR][toC]='bQ'; }
+  }
+
+  // Log
+  const captureTxt = captured ? `x${PIECE_NAMES[captured[1]]}` : '';
+  moveHistory.push({ from:[fromR,fromC], to:[toR,toC], piece, captured, notation: `${fromName}${captured?'x':'→'}${toName}` });
+
+  // Trocar turno
+  turn = turn==='w' ? 'b' : 'w';
+  const nextColor = turn==='w' ? 'Brancas' : 'Pretas';
+
+  // Verificar xeque/mate
+  const inCheck = isInCheck(turn);
+  const hasLegal = hasAnyLegalMove(turn);
+
+  renderBoard();
+  updateCaptured();
+  updateMoveLog();
+  updateTurnIndicator();
+
+  let moveTxt = `${color} ${PIECE_NAMES[piece[1]]} de ${fromName} para ${toName}`;
+  if (captured) moveTxt += `, capturando ${PIECE_NAMES[captured[1]]}`;
+
+  if (!hasLegal) {
+    if (inCheck) {
+      // Xeque-mate
+      gameOver = true;
+      const winner = turn==='w' ? 'Pretas' : 'Brancas';
+      moveTxt += '. Xeque-mate! ' + winner + ' vencem!';
+      updateStatus('Xeque-mate! ' + winner + ' vencem!');
+      narrate(moveTxt);
+      setTimeout(() => showModal('checkmate', winner), 800);
+    } else {
+      // Empate por afogamento
+      gameOver = true;
+      moveTxt += '. Empate por afogamento!';
+      updateStatus('Empate por afogamento!');
+      narrate(moveTxt);
+      setTimeout(() => showModal('stalemate', ''), 800);
+    }
+  } else if (inCheck) {
+    moveTxt += '. Xeque! Vez das ' + nextColor + '.';
+    updateStatus('Xeque! Vez das ' + nextColor + '.');
+    narrate(moveTxt);
+  } else {
+    moveTxt += '. Vez das ' + nextColor + '.';
+    updateStatus('Vez das ' + nextColor + '.');
+    narrate(moveTxt);
+  }
+
+  playMoveSound(!!captured, inCheck);
+  focusSq(toR, toC);
+}
+
+// ---- SONS ----
+let actx = null;
+function getActx() {
+  if (!actx) actx = new (window.AudioContext||window.webkitAudioContext)();
+  return actx;
+}
+function playMoveSound(capture, check) {
+  try {
+    const ctx = getActx();
+    if (ctx.state==='suspended') ctx.resume();
+    if (check) {
+      // Som dramático de xeque
+      [440,554,659].forEach((f,i) => {
+        const o=ctx.createOscillator(), g=ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.type='sine'; o.frequency.value=f;
+        const t=ctx.currentTime+i*.08;
+        g.gain.setValueAtTime(0,t);
+        g.gain.linearRampToValueAtTime(.2,t+.03);
+        g.gain.exponentialRampToValueAtTime(.001,t+.4);
+        o.start(t); o.stop(t+.4);
+      });
+    } else if (capture) {
+      // Som de captura
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type='sawtooth';
+      o.frequency.setValueAtTime(300,ctx.currentTime);
+      o.frequency.linearRampToValueAtTime(150,ctx.currentTime+.2);
+      g.gain.setValueAtTime(.15,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.2);
+      o.start(ctx.currentTime); o.stop(ctx.currentTime+.2);
+    } else {
+      // Som de movimento simples
+      const o=ctx.createOscillator(), g=ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type='sine'; o.frequency.value=440;
+      g.gain.setValueAtTime(0,ctx.currentTime);
+      g.gain.linearRampToValueAtTime(.08,ctx.currentTime+.02);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.15);
+      o.start(ctx.currentTime); o.stop(ctx.currentTime+.15);
+    }
+  } catch(e) {}
+}
+
+// ---- NARRAÇÃO ----
+function narrate(text) {
+  // Atualiza live region
+  const el = document.getElementById('narration');
+  el.textContent = ''; 
+  requestAnimationFrame(() => { el.textContent = text; });
+  // SpeechSynthesis
+  if (!narrationOn) return;
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'pt-BR'; u.rate = 0.95; u.pitch = 1.05;
+  speechSynthesis.speak(u);
+}
+
+function updateStatus(text) {
+  document.getElementById('status-box').textContent = text;
+  document.getElementById('chess-status').textContent = text;
+}
+
+// ---- TURNO ----
+function updateTurnIndicator() {
+  const dot = document.getElementById('turn-dot');
+  const txt = document.getElementById('turn-text');
+  dot.className = 'turn-dot ' + (turn==='w' ? 'white' : 'black');
+  txt.textContent = turn==='w' ? 'Vez das Brancas' : 'Vez das Pretas';
+}
+
+// ---- PEÇAS CAPTURADAS ----
+function updateCaptured() {
+  const cw = document.getElementById('captured-white');
+  const cb = document.getElementById('captured-black');
+  cw.innerHTML = capturedWhite.map(p=>`<span class="captured-piece" aria-hidden="true">${PIECES[p]}</span>`).join('');
+  cb.innerHTML = capturedBlack.map(p=>`<span class="captured-piece" aria-hidden="true">${PIECES[p]}</span>`).join('');
+  cw.setAttribute('aria-label', capturedWhite.length
+    ? 'Peças capturadas pelas brancas: ' + capturedWhite.map(p=>PIECE_NAMES[p[1]]).join(', ')
+    : 'Nenhuma peça capturada pelas brancas');
+  cb.setAttribute('aria-label', capturedBlack.length
+    ? 'Peças capturadas pelas pretas: ' + capturedBlack.map(p=>PIECE_NAMES[p[1]]).join(', ')
+    : 'Nenhuma peça capturada pelas pretas');
+}
+
+// ---- HISTÓRICO ----
+function updateMoveLog() {
+  const log = document.getElementById('move-log');
+  log.innerHTML = '';
+  for (let i=0; i<moveHistory.length; i+=2) {
+    const entry = document.createElement('div');
+    entry.className = 'move-log-entry';
+    const num = document.createElement('span');
+    num.className = 'move-num'; num.textContent = (i/2+1)+'.';
+    const mw = document.createElement('span');
+    mw.className = 'move-white'; mw.textContent = moveHistory[i]?.notation || '';
+    const mb = document.createElement('span');
+    mb.className = 'move-black'; mb.textContent = moveHistory[i+1]?.notation || '';
+    entry.appendChild(num); entry.appendChild(mw); entry.appendChild(mb);
+    log.appendChild(entry);
+  }
+  log.scrollTop = log.scrollHeight;
+}
+
+// ---- MOTOR DE MOVIMENTOS ----
+function getLegalMoves(row, col) {
+  const piece = board[row][col];
+  if (!piece) return [];
+  const pseudo = getPseudoMoves(row, col, piece);
+  return pseudo.filter(([tr,tc]) => {
+    // Verificar se o movimento deixa o próprio rei em xeque
+    const saved = board[tr][tc];
+    const savedKing = {...kingPos};
+    board[tr][tc] = piece;
+    board[row][col] = null;
+    if (piece[1]==='K') kingPos[piece[0]] = [tr,tc];
+    const check = isInCheck(piece[0]);
+    board[row][col] = piece;
+    board[tr][tc] = saved;
+    if (piece[1]==='K') kingPos[piece[0]] = savedKing[piece[0]];
+    return !check;
+  });
+}
+
+function getPseudoMoves(row, col, piece) {
+  const color = piece[0], type = piece[1];
+  const moves = [];
+  const enemy = color==='w' ? 'b' : 'w';
+
+  const add = (r,c) => {
+    if (r<0||r>7||c<0||c>7) return false;
+    if (board[r][c] && board[r][c][0]===color) return false;
+    moves.push([r,c]);
+    return !board[r][c]; // continuar se vazia
+  };
+
+  const slide = (dr, dc) => {
+    let r=row+dr, c=col+dc;
+    while(r>=0&&r<=7&&c>=0&&c<=7) {
+      if (board[r][c]) {
+        if (board[r][c][0]===enemy) moves.push([r,c]);
+        break;
+      }
+      moves.push([r,c]);
+      r+=dr; c+=dc;
+    }
+  };
+
+  if (type==='P') {
+    const dir = color==='w' ? -1 : 1;
+    const start = color==='w' ? 6 : 1;
+    if (!board[row+dir]?.[col]) {
+      moves.push([row+dir,col]);
+      if (row===start && !board[row+2*dir]?.[col]) moves.push([row+2*dir,col]);
+    }
+    [-1,1].forEach(dc => {
+      if (board[row+dir]?.[col+dc]?.[0]===enemy) moves.push([row+dir,col+dc]);
+    });
+  } else if (type==='R') {
+    [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dr,dc])=>slide(dr,dc));
+  } else if (type==='B') {
+    [[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([dr,dc])=>slide(dr,dc));
+  } else if (type==='Q') {
+    [[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([dr,dc])=>slide(dr,dc));
+  } else if (type==='N') {
+    [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]].forEach(([dr,dc])=>add(row+dr,col+dc));
+  } else if (type==='K') {
+    [[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]].forEach(([dr,dc])=>add(row+dr,col+dc));
+  }
+
+  return moves;
+}
+
+function isInCheck(color) {
+  const [kr,kc] = kingPos[color];
+  const enemy = color==='w' ? 'b' : 'w';
+  for (let r=0;r<8;r++) {
+    for (let c=0;c<8;c++) {
+      if (board[r][c]?.[0]===enemy) {
+        const pm = getPseudoMoves(r,c,board[r][c]);
+        if (pm.some(([tr,tc])=>tr===kr&&tc===kc)) return true;
+      }
+    }
+  }
+  return false;
+}
+
+function hasAnyLegalMove(color) {
+  for (let r=0;r<8;r++) {
+    for (let c=0;c<8;c++) {
+      if (board[r][c]?.[0]===color) {
+        if (getLegalMoves(r,c).length>0) return true;
+      }
+    }
+  }
+  return false;
+}
+
+// ---- DESFAZER ----
+function undoMove() {
+  if (boardHistory.length===0) { narrate('Nenhum movimento para desfazer.'); return; }
+  board = boardHistory.pop();
+  moveHistory.pop();
+  turn = turn==='w' ? 'b' : 'w';
+  // Reatualizar posição do rei
+  for(let r=0;r<8;r++) for(let c=0;c<8;c++) {
+    if(board[r][c]==='wK') kingPos.w=[r,c];
+    if(board[r][c]==='bK') kingPos.b=[r,c];
+  }
+  // Reatualizar capturas (refazer do histórico)
+  capturedWhite=[]; capturedBlack=[];
+  moveHistory.forEach(m=>{ if(m.captured){ if(m.captured[0]==='w') capturedBlack.push(m.captured); else capturedWhite.push(m.captured); }});
+  selected=null; possibleMoves=[];
+  gameOver=false;
+  renderBoard(); updateCaptured(); updateMoveLog(); updateTurnIndicator();
+  const color = turn==='w'?'Brancas':'Pretas';
+  updateStatus('Movimento desfeito. Vez das '+color+'.');
+  narrate('Movimento desfeito. Vez das '+color+'.');
+}
+
+// ---- LER TABULEIRO ----
+function readBoard() {
+  let desc = 'Estado do tabuleiro: ';
+  const whites=[], blacks=[];
+  for(let r=0;r<8;r++) for(let c=0;c<8;c++) {
+    const p=board[r][c];
+    if(!p) continue;
+    const sq=FILES[c]+RANKS[r];
+    if(p[0]==='w') whites.push(`${PIECE_NAMES[p[1]]} em ${sq}`);
+    else blacks.push(`${PIECE_NAMES[p[1]]} em ${sq}`);
+  }
+  desc += 'Brancas: ' + whites.join(', ') + '. Pretas: ' + blacks.join(', ') + '.';
+  narrate(desc);
+  updateStatus('Lendo posição do tabuleiro...');
+}
+
+function readSelectedMoves() {
+  if (!selected) { narrate('Nenhuma peça selecionada.'); return; }
+  const piece = board[selected[0]][selected[1]];
+  if (!piece) { narrate('Nenhuma peça selecionada.'); return; }
+  const sqName = FILES[selected[1]]+RANKS[selected[0]];
+  const color = piece[0]==='w'?'Branca':'Preta';
+  if (possibleMoves.length===0) {
+    narrate(`${color} ${PIECE_NAMES[piece[1]]} em ${sqName} não tem movimentos possíveis.`);
+  } else {
+    const moveNames = possibleMoves.map(m=>FILES[m[1]]+RANKS[m[0]]).join(', ');
+    narrate(`${color} ${PIECE_NAMES[piece[1]]} em ${sqName}. Movimentos possíveis: ${moveNames}.`);
+  }
+}
+
+// ---- MODAL ----
+function showModal(type, winner) {
+  const modal = document.getElementById('modal-end');
+  const icon  = document.getElementById('modal-icon');
+  const title = document.getElementById('modal-end-title');
+  const msg   = document.getElementById('modal-end-msg');
+  if (type==='checkmate') {
+    icon.textContent='👑';
+    title.textContent='Xeque-Mate!';
+    msg.textContent=`${winner} vencem. "Off with their heads!"`;
+  } else {
+    icon.textContent='🃏';
+    title.textContent='Empate!';
+    msg.textContent='Afogamento. "Curiouser and curiouser!"';
+  }
+  modal.classList.add('visible');
+  modal.setAttribute('aria-hidden','false');
+  document.getElementById('btn-modal-new').focus();
+}
+function closeModal() {
+  const modal = document.getElementById('modal-end');
+  modal.classList.remove('visible');
+  modal.setAttribute('aria-hidden','true');
+}
+
+// ---- CONTROLES ----
+document.getElementById('btn-new-game').addEventListener('click', () => {
+  if (actx && actx.state==='suspended') actx.resume();
+  initGame();
+});
+document.getElementById('btn-modal-new').addEventListener('click', initGame);
+document.getElementById('btn-undo').addEventListener('click', undoMove);
+document.getElementById('btn-flip').addEventListener('click', () => {
+  flipped = !flipped;
+  renderBoard();
+  narrate('Tabuleiro girado. ' + (flipped?'Peças pretas na parte inferior.':'Peças brancas na parte inferior.'));
+});
+document.getElementById('btn-read-board').addEventListener('click', readBoard);
+document.getElementById('btn-read-piece').addEventListener('click', readSelectedMoves);
+
+// Escape fecha modal
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') closeModal();
+});
+
+// ---- ACESSIBILIDADE ----
+function saveP(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function loadP(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+
+// Alto contraste
+const btnC = document.getElementById('btn-contrast');
+if(loadP('hc-xadrez')==='true'){
+  document.body.classList.add('high-contrast');
+  btnC.setAttribute('aria-pressed','true'); btnC.textContent='◑ Contraste';
+}
+btnC.addEventListener('click',function(){
+  const on=this.getAttribute('aria-pressed')==='true';
+  document.body.classList.toggle('high-contrast');
+  this.setAttribute('aria-pressed',String(!on));
+  this.textContent=on?'◐ Contraste':'◑ Contraste';
+  saveP('hc-xadrez',String(!on));
+  narrate(on?'Alto contraste desativado':'Alto contraste ativado');
+});
+
+// Narração
+const btnN = document.getElementById('btn-narration');
+btnN.addEventListener('click',function(){
+  narrationOn=!narrationOn;
+  this.setAttribute('aria-pressed',String(narrationOn));
+  this.textContent=narrationOn?'🔊 Narração':'🔇 Narração';
+  if(!narrationOn) speechSynthesis?.cancel();
+});
+
+// TTS da página
+const btnTTS = document.getElementById('btn-tts');
+if('speechSynthesis' in window){
+  btnTTS.addEventListener('click',function(){
+    const reading=this.getAttribute('aria-pressed')==='true';
+    if(reading){
+      speechSynthesis.cancel();
+      this.setAttribute('aria-pressed','false');
+      this.textContent='📖 Ler página';
+    } else {
+      speechSynthesis.cancel();
+      const txt = document.getElementById('main-content')?.innerText||document.body.innerText;
+      const u=new SpeechSynthesisUtterance(txt);
+      u.lang='pt-BR'; u.rate=0.9;
+      u.onstart=()=>{ this.setAttribute('aria-pressed','true'); this.textContent='⏹ Parar'; };
+      u.onend=u.onerror=()=>{ this.setAttribute('aria-pressed','false'); this.textContent='📖 Ler página'; };
+      speechSynthesis.speak(u);
+    }
+  });
+} else { btnTTS.style.display='none'; }
+
+// Fonte
+const btnFA=document.getElementById('btn-fa'), btnFD=document.getElementById('btn-fd');
+let fonte=parseInt(loadP('fonte-xadrez'),10)||100;
+function apFont(t){document.body.style.fontSize=t+'%';saveP('fonte-xadrez',t);btnFA.disabled=t>=150;btnFD.disabled=t<=80;}
+apFont(fonte);
+btnFA.addEventListener('click',()=>{if(fonte<150){fonte+=10;apFont(fonte);}});
+btnFD.addEventListener('click',()=>{if(fonte>80){fonte-=10;apFont(fonte);}});
+
+// Daltonismo
+const selC=document.getElementById('sel-color');
+const savedD=loadP('daltonismo-xadrez');
+if(savedD&&savedD!=='normal'){document.documentElement.classList.add(savedD);selC.value=savedD;}
+selC.addEventListener('change',function(){
+  document.documentElement.classList.remove('protanopia','deuteranopia','tritanopia');
+  if(this.value!=='normal') document.documentElement.classList.add(this.value);
+  saveP('daltonismo-xadrez',this.value);
+  narrate('Modo visual: '+this.options[this.selectedIndex].text);
+});
+
+// ---- INICIAR ----
+initGame();
+</script>
+</body>
+</html>
