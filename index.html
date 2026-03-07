@@ -3,55 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Projeto demonstrativo de acessibilidade digital com foco em boas práticas front-end.">
-    <title>Access+ | Portfólio Acessível</title>
+
+    <!-- SEO básico -->
+    <title>Access+ | Portfólio de Acessibilidade Web</title>
+    <meta name="description" content="Projeto demonstrativo de acessibilidade digital com foco em boas práticas de front-end, HTML semântico, WCAG e design inclusivo.">
+    <meta name="keywords" content="acessibilidade web, WCAG, HTML semântico, front-end acessível, design inclusivo">
+    <meta name="author" content="Erika Francelino">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Access+ | Portfólio de Acessibilidade Web">
+    <meta property="og:description" content="Projeto demonstrativo de acessibilidade digital com foco em boas práticas de front-end, HTML semântico, WCAG e design inclusivo.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="pt_BR">
+
+    <!-- Tema mobile -->
+    <meta name="theme-color" content="#F4F1EA">
+
+    <!-- Tipografia -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Playfair+Display:wght@600&display=swap">
 
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<a href="#main-content" class="skip-link">
-    Pular para o conteúdo principal
-</a>
+
+<a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
 
 <header>
     <nav aria-label="Navegação principal">
+        <span class="logo" aria-label="Access+">Access+</span>
         <ul>
             <li><a href="#sobre">Sobre</a></li>
             <li><a href="#recursos">Recursos</a></li>
+            <li><a href="#demonstracao">Demonstração</a></li>
             <li><a href="#contato">Contato</a></li>
         </ul>
     </nav>
-    <button id="toggle-contrast" aria-pressed="false">
-    Ativar Alto Contraste
-</button>
 
+    <div class="header-controls">
+        <button id="toggle-contrast" aria-pressed="false">
+            Ativar Alto Contraste
+        </button>
+
+        <button id="toggle-tts" aria-pressed="false" aria-label="Ativar leitura em voz alta do conteúdo">
+            🔊 Ouvir conteúdo
+        </button>
+
+        <!-- ✅ ADICIONADO: controle de fonte dentro do header-controls -->
+        <div class="controle-fonte" role="group" aria-label="Controle de tamanho de fonte">
+            <button id="aumentar-fonte" aria-label="Aumentar tamanho da fonte">A+</button>
+            <button id="diminuir-fonte" aria-label="Diminuir tamanho da fonte">A-</button>
+        </div>
+
+        <div class="colorblind-controls">
+            <label for="colorblind-mode">Simular Daltonismo:</label>
+            <select id="colorblind-mode">
+                <option value="normal">Visão Normativa</option>
+                <option value="protanopia">Protanopia</option>
+                <option value="deuteranopia">Deuteranopia</option>
+                <option value="tritanopia">Tritanopia</option>
+            </select>
+        </div>
+    </div>
 </header>
 
 <main id="main-content">
 
-
-    <section id="sobre">
-        <h1>Access+</h1>
+    <section class="hero" aria-labelledby="titulo-principal">
+        <span>Acessibilidade Digital</span>
+        <h1 id="titulo-principal">Access+</h1>
         <p>
-            Projeto demonstrativo de acessibilidade digital, unindo design moderno e boas práticas técnicas.
+            O Access+ é um projeto demonstrativo focado em boas práticas de acessibilidade digital,
+            seguindo recomendações internacionais de design inclusivo e desenvolvimento web acessível.
+        </p>
+        <p>
+            O objetivo é mostrar como pequenas decisões no código podem tornar a web
+            mais acessível para pessoas com diferentes necessidades.
         </p>
     </section>
 
-    <section id="recursos">
-        <h2>Recursos de Acessibilidade</h2>
-        <ul>
+    <section id="sobre" aria-labelledby="titulo-educacao">
+        <h2 id="titulo-educacao">O que é acessibilidade digital?</h2>
+        <p>
+            Acessibilidade digital é a prática de desenvolver websites, aplicações e conteúdos
+            de forma que todas as pessoas possam utilizá-los, incluindo usuários com deficiências
+            visuais, motoras, cognitivas ou auditivas.
+        </p>
+        <p>
+            As diretrizes mais utilizadas no mundo são as WCAG (Web Content Accessibility Guidelines).
+        </p>
+    </section>
+
+    <section id="recursos" aria-labelledby="titulo-recursos">
+        <h2 id="titulo-recursos">Recursos demonstrados neste projeto</h2>
+        <ul aria-label="Lista de recursos de acessibilidade implementados">
             <li>HTML semântico</li>
-            <li>Estrutura compatível com WCAG</li>
             <li>Navegação por teclado</li>
             <li>Botão de alto contraste</li>
+            <li>Simulação de daltonismo</li>
+            <li>Skip link para pular navegação</li>
+            <li>ARIA para leitores de tela</li>
+            <li>Audiodescrição por voz (Text-to-Speech)</li>
+            <li>Tradução para Libras via VLibras</li>
+            <li>Controle de tamanho de fonte</li>
         </ul>
+    </section>
+
+    <section id="boas-praticas" aria-labelledby="titulo-boas-praticas">
+        <h2 id="titulo-boas-praticas">Boas práticas de acessibilidade</h2>
+        <ul aria-label="Lista de boas práticas de acessibilidade">
+            <li>Usar estrutura semântica com header, nav, main e footer</li>
+            <li>Garantir contraste adequado entre texto e fundo</li>
+            <li>Permitir navegação completa por teclado</li>
+            <li>Utilizar atributos ARIA quando necessário</li>
+            <li>Evitar depender apenas de cor para transmitir informação</li>
+        </ul>
+    </section>
+
+    <section id="demonstracao" aria-labelledby="titulo-demonstracao">
+        <h2 id="titulo-demonstracao">Exemplos Interativos de Acessibilidade</h2>
+        <p>
+            Nesta seção você pode testar recursos de acessibilidade implementados neste projeto.
+        </p>
+        <div class="demo-grid">
+            <div class="demo-card">
+                <h3>Modo Alto Contraste</h3>
+                <p>
+                    Clique no botão de alto contraste no topo da página para alternar entre os modos.
+                    Este recurso melhora a legibilidade para usuários com baixa visão.
+                </p>
+            </div>
+            <div class="demo-card">
+                <h3>Simulação de Daltonismo</h3>
+                <p>
+                    Use o seletor de simulação de daltonismo no topo para visualizar como diferentes
+                    usuários percebem as cores da interface.
+                </p>
+            </div>
+            <div class="demo-card">
+                <h3>Navegação por Teclado</h3>
+                <p>
+                    Use a tecla <strong>Tab</strong> para navegar pelos links e botões da página.
+                    Todos os elementos possuem foco visível.
+                </p>
+            </div>
+            <div class="demo-card">
+                <h3>Audiodescrição</h3>
+                <p>
+                    Clique em <strong>🔊 Ouvir conteúdo</strong> no topo para ativar a leitura
+                    em voz alta da página. Útil para usuários com deficiência visual ou dislexia.
+                </p>
+            </div>
+            <div class="demo-card">
+                <h3>Tradução em Libras</h3>
+                <p>
+                    Clique no botão <strong>VLibras</strong> no canto da tela para ativar
+                    o avatar que traduz o conteúdo para Língua Brasileira de Sinais.
+                </p>
+            </div>
+            <div class="demo-card">
+                <h3>Controle de Fonte</h3>
+                <p>
+                    Use os botões <strong>A+</strong> e <strong>A-</strong> no topo para aumentar
+                    ou diminuir o tamanho do texto. A preferência é salva automaticamente.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contato" aria-labelledby="titulo-contato">
+        <h2 id="titulo-contato">Contato</h2>
+        <p>Entre em contato para saber mais sobre o projeto.</p>
     </section>
 
 </main>
 
-<footer id="contato">
+<footer>
     <p>Desenvolvido por Erika Francelino • 2026</p>
 </footer>
+
+<div id="screen-reader-message" aria-live="polite" class="sr-only"></div>
+
+<!-- VLibras -->
+<div vw class="enabled" aria-hidden="true">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+        <div class="vw-plugin-top-wrapper"></div>
+    </div>
+</div>
+<script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+<script>
+    new window.VLibras.Widget('https://vlibras.gov.br/app');
+</script>
 
 <script src="js/script.js"></script>
 </body>
