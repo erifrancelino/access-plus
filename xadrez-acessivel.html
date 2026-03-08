@@ -299,7 +299,69 @@ kbd {
   font-size:.75rem; color:rgba(154,110,40,.7);
 }
 
-/* ── TABULEIRO 8x8 ── */
+/* ── ÍCONES DE NAIPES NOS CARDS ── */
+.card-title .suit { font-style:normal; opacity:.5; font-size:.9em; }
+
+/* ── TRANSIÇÃO DE NOVA PARTIDA ── */
+@keyframes boardReveal {
+  0%   { opacity:0; transform:scale(.96) translateY(8px); filter:blur(4px); }
+  100% { opacity:1; transform:scale(1)   translateY(0);   filter:blur(0); }
+}
+.board-revealing #chess-board {
+  animation: boardReveal .7s cubic-bezier(.22,1,.36,1) forwards;
+}
+
+/* ── CITAÇÃO ALICE DURANTE PARTIDA ── */
+.alice-mid-quote {
+  position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(30px);
+  background:linear-gradient(135deg, rgba(30,8,14,.97), rgba(20,5,10,.99));
+  border:1px solid rgba(154,90,40,.5);
+  border-radius:var(--radius); padding:.8rem 1.4rem;
+  font-family:var(--font-ser); font-style:italic;
+  font-size:.88rem; color:var(--gold-soft);
+  max-width:420px; text-align:center; line-height:1.6;
+  box-shadow:0 0 40px rgba(107,21,40,.5), 0 8px 30px rgba(0,0,0,.8);
+  z-index:40; opacity:0;
+  transition:opacity .5s ease, transform .5s cubic-bezier(.22,1,.36,1);
+  pointer-events:none;
+}
+.alice-mid-quote.show {
+  opacity:1; transform:translateX(-50%) translateY(0);
+}
+.alice-mid-quote .quote-attr {
+  display:block; font-size:.72rem; color:var(--text-muted);
+  margin-top:.35rem; letter-spacing:1px;
+}
+
+/* ── ANIMAÇÃO DE VITÓRIA DRAMÁTICA ── */
+@keyframes victoryShimmer {
+  0%,100% { box-shadow:0 0 120px rgba(201,168,76,.4), 0 40px 80px rgba(0,0,0,.9); }
+  50%     { box-shadow:0 0 180px rgba(201,168,76,.8), 0 40px 80px rgba(0,0,0,.9), 0 0 60px rgba(208,58,88,.4); }
+}
+@keyframes victoryFloat {
+  0%,100% { transform:scale(1) translateY(0); }
+  50%     { transform:scale(1.02) translateY(-4px); }
+}
+@keyframes crownSpin {
+  0%   { transform:scale(0) rotate(-180deg); opacity:0; }
+  60%  { transform:scale(1.3) rotate(10deg); opacity:1; }
+  100% { transform:scale(1) rotate(0deg); opacity:1; }
+}
+.modal-overlay.open.victory .modal {
+  animation:victoryFloat 2s ease-in-out infinite, victoryShimmer 2s ease-in-out infinite;
+}
+.modal-overlay.open.victory .modal-icon {
+  animation:crownSpin .8s cubic-bezier(.34,1.56,.64,1) forwards;
+  display:inline-block;
+}
+@keyframes staleSwirl {
+  0%   { transform:scale(0) rotate(0deg); opacity:0; }
+  100% { transform:scale(1) rotate(720deg); opacity:1; }
+}
+.modal-overlay.open.stalemate .modal-icon {
+  animation:staleSwirl 1s cubic-bezier(.34,1.56,.64,1) forwards;
+  display:inline-block;
+}
 #chess-board {
   display:grid;
   grid-template-columns:repeat(8, var(--sq));
@@ -530,22 +592,22 @@ html.hc .piece { text-shadow:none !important; }
     </div>
 
     <div class="card">
-      <p class="card-title">Situação</p>
+      <p class="card-title"><span class="suit" aria-hidden="true">♥</span> Situação</p>
       <div class="status-box" id="status-box" role="status" aria-live="polite">Selecione uma peça para começar.</div>
     </div>
 
     <div class="card">
-      <p class="card-title">Capturadas — Brancas</p>
+      <p class="card-title"><span class="suit" aria-hidden="true">♠</span> Capturadas — Brancas</p>
       <div class="captured" id="cap-w" aria-live="polite" aria-label="Peças capturadas pelas brancas"></div>
     </div>
 
     <div class="card">
-      <p class="card-title">Capturadas — Pretas</p>
+      <p class="card-title"><span class="suit" aria-hidden="true">♦</span> Capturadas — Pretas</p>
       <div class="captured" id="cap-b" aria-live="polite" aria-label="Peças capturadas pelas pretas"></div>
     </div>
 
     <div class="card">
-      <p class="card-title">Histórico</p>
+      <p class="card-title"><span class="suit" aria-hidden="true">♣</span> Histórico</p>
       <div class="move-log" id="move-log" role="log" aria-live="polite" aria-label="Histórico de movimentos"></div>
     </div>
 
@@ -584,7 +646,7 @@ html.hc .piece { text-shadow:none !important; }
   <aside class="panel" aria-label="Controles e legenda">
 
     <div class="card">
-      <p class="card-title">Controles</p>
+      <p class="card-title"><span class="suit" aria-hidden="true">♥</span> Controles</p>
       <div style="display:flex;flex-direction:column;gap:.45rem;">
         <button class="btn-game primary" id="btn-new">♟ Nova Partida</button>
         <button class="btn-game" id="btn-undo">↺ Desfazer movimento</button>
@@ -595,7 +657,7 @@ html.hc .piece { text-shadow:none !important; }
     </div>
 
     <div class="card">
-      <p class="card-title">Teclado</p>
+      <p class="card-title"><span class="suit" aria-hidden="true">♠</span> Teclado</p>
       <div style="font-size:.88rem;color:var(--text-muted);line-height:2.4;">
         <div><kbd>↑ ↓ ← →</kbd> Navegar casas</div>
         <div><kbd>Enter</kbd> Selecionar / Mover</div>
@@ -607,7 +669,7 @@ html.hc .piece { text-shadow:none !important; }
     </div>
 
     <div class="card">
-      <p class="card-title">Legenda das Peças</p>
+      <p class="card-title"><span class="suit" aria-hidden="true">♦</span> Legenda das Peças</p>
       <div aria-label="Legenda de peças">
         <div class="legend-row"><span class="legend-piece">♔</span> Rei branco</div>
         <div class="legend-row"><span class="legend-piece">♕</span> Rainha branca</div>
@@ -627,6 +689,12 @@ html.hc .piece { text-shadow:none !important; }
   </aside>
 
 </main>
+
+<!-- CITAÇÃO ALICE FLUTUANTE -->
+<div class="alice-mid-quote" id="alice-quote-toast" aria-hidden="true">
+  <span id="alice-quote-text"></span>
+  <span class="quote-attr">— Lewis Carroll</span>
+</div>
 
 <!-- MODAL -->
 <div class="modal-overlay" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
@@ -755,6 +823,8 @@ function doMove(fr,fc,tr,tc){
   if(piece==='wP'&&tr===0)board[tr][tc]='wQ';
   if(piece==='bP'&&tr===7)board[tr][tc]='bQ';
   hist.push({fr,fc,tr,tc,piece,cap,notation:fromNm+(cap?'x':'→')+toNm});
+  // citações de Alice
+  showAliceQuote(hist.length, !!cap);
   turn=turn==='w'?'b':'w';
   const check=isInCheck(turn),hasAny=hasAnyLegal(turn);
   render();focusSq(tr,tc);
@@ -912,17 +982,59 @@ function updateLog(){
   log.scrollTop=log.scrollHeight;
 }
 
-function showModal(type,winner){
-  const el=document.getElementById('modal');
-  document.getElementById('modal-icon').textContent=type==='mate'?'👑':'🃏';
-  document.getElementById('modal-title').textContent=type==='mate'?'Xeque-Mate!':'Empate!';
-  document.getElementById('modal-msg').textContent=type==='mate'
-    ?`${winner} vencem. "Off with their heads!"`
-    :`"Curiouser and curiouser!" — Afogamento.`;
-  el.classList.add('open');el.setAttribute('aria-hidden','false');
+// ── CITAÇÕES DE ALICE ──
+const ALICE_QUOTES = [
+  { text: '"Cada vez mais curioso!"', move: 5 },
+  { text: '"Às vezes chego a acreditar em seis coisas impossíveis antes do café da manhã."', move: 10 },
+  { text: '"Seria tão bom se alguma coisa fizesse sentido por uma vez."', move: 15 },
+  { text: '"Cortem as cabeças!"', move: null, onCapture: true },
+  { text: '"Comece pelo começo e vá até o fim: depois pare."', move: 20 },
+  { text: '"Somos todos loucos aqui."', move: 25 },
+  { text: '"Alice começou a pensar que muito poucas coisas eram realmente impossíveis."', move: 30 },
+  { text: '"É preciso correr muito para ficar no mesmo lugar."', move: 35 },
+];
+let shownQuotes = new Set();
+
+function showAliceQuote(triggerMove, isCapture) {
+  const candidates = ALICE_QUOTES.filter(q => {
+    if(shownQuotes.has(q.text)) return false;
+    if(isCapture && q.onCapture) return true;
+    if(q.move && triggerMove === q.move) return true;
+    return false;
+  });
+  if(!candidates.length) return;
+  const q = candidates[0];
+  shownQuotes.add(q.text);
+  const toast = document.getElementById('alice-quote-toast');
+  document.getElementById('alice-quote-text').textContent = q.text;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+// ── TRANSIÇÃO AO INICIAR PARTIDA ──
+function triggerBoardReveal() {
+  const wrap = document.querySelector('.board-wrap');
+  wrap.classList.add('board-revealing');
+  setTimeout(() => wrap.classList.remove('board-revealing'), 800);
+}
+
+function showModal(type, winner) {
+  const el = document.getElementById('modal');
+  document.getElementById('modal-icon').textContent = type==='mate' ? '👑' : '🃏';
+  document.getElementById('modal-title').textContent = type==='mate' ? 'Xeque-Mate!' : 'Empate!';
+  document.getElementById('modal-msg').textContent = type==='mate'
+    ? `${winner} vencem. "Off with their heads!"`
+    : '"Curiouser and curiouser!" — Afogamento.';
+  el.classList.remove('victory','stalemate');
+  el.classList.add('open', type==='mate' ? 'victory' : 'stalemate');
+  el.setAttribute('aria-hidden','false');
   document.getElementById('btn-modal-new').focus();
 }
-function closeModal(){const el=document.getElementById('modal');el.classList.remove('open');el.setAttribute('aria-hidden','true');}
+function closeModal(){
+  const el=document.getElementById('modal');
+  el.classList.remove('open','victory','stalemate');
+  el.setAttribute('aria-hidden','true');
+}
 
 function readBoard(){
   const whites=[],blacks=[];
@@ -990,9 +1102,10 @@ document.getElementById('btn-tutorial').addEventListener('click',()=>{
 let firstTabFocus = true;
 
 function startGame(){
-  resetState();render();firstTabFocus=true;stopTutorial();
+  resetState();render();firstTabFocus=true;stopTutorial();shownQuotes=new Set();
   setStatus('Nova partida. Vez das Brancas. Use as setas para navegar e Enter para selecionar.');
   setTimeout(()=>say('Nova partida de Xadrez das Maravilhas. Vez das Brancas.'),5000);
+  triggerBoardReveal();
   closeModal();
 }
 
