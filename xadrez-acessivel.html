@@ -601,6 +601,8 @@ html.hc .piece { text-shadow:none !important; }
         <div><kbd>Enter</kbd> Selecionar / Mover</div>
         <div><kbd>Esc</kbd> Cancelar seleção</div>
         <div><kbd>Tab</kbd> Próxima casa</div>
+        <div><kbd>T</kbd> Ler turno atual</div>
+        <div><kbd>P</kbd> Ler placar / capturas</div>
       </div>
     </div>
 
@@ -710,7 +712,14 @@ function handleKey(e,r,c){
   if(e.key==='ArrowDown')nr=flipped?r-1:r+1;
   if(e.key==='ArrowLeft')nc=flipped?c+1:c-1;
   if(e.key==='ArrowRight')nc=flipped?c-1:c+1;
-  if(nr>=0&&nr<=7&&nc>=0&&nc<=7&&(nr!==r||nc!==c)){e.preventDefault();focusSq(nr,nc);const p=board[nr][nc],nm=sqName(nr,nc);say(p?`${nm}: ${colName(p[0])} ${NAME[p[1]]}`:`${nm}: vazia`);}
+  if(nr>=0&&nr<=7&&nc>=0&&nc<=7&&(nr!==r||nc!==c)){
+    e.preventDefault();focusSq(nr,nc);
+    playSound(false,false,false,false,true);
+    const p=board[nr][nc],nm=sqName(nr,nc);
+    // narrar coordenada completa com nome da peça
+    const checkWarn = p&&p[1]==='K'&&isInCheck(p[0]) ? ', em xeque!' : '';
+    say(p?`${nm}: ${colName(p[0])} ${NAME[p[1]]}${checkWarn}`:`${nm}: vazia`);
+  }
 }
 
 function handleClick(r,c){
@@ -728,9 +737,11 @@ function handleClick(r,c){
 
 function selectPiece(r,c){
   const piece=board[r][c];sel=[r,c];poss=getLegalMoves(r,c);render();focusSq(r,c);
+  playSound(false,false,false,true,false);
   const nm=sqName(r,c);
   const movesTxt=poss.length?`${poss.length} movimento${poss.length>1?'s':''}: ${poss.map(m=>sqName(m[0],m[1])).join(', ')}`:'sem movimentos possíveis';
-  const msg=`${colName(piece[0])} ${NAME[piece[1]]} em ${nm}. ${movesTxt}.`;
+  const checkWarn = isInCheck(turn) ? ` Atenção: seu Rei está em xeque!` : '';
+  const msg=`${colName(piece[0])} ${NAME[piece[1]]} em ${nm}.${checkWarn} ${movesTxt}.`;
   say(msg);setStatus(msg);
 }
 
@@ -749,10 +760,9 @@ function doMove(fr,fc,tr,tc){
   render();focusSq(tr,tc);
   let msg=`${colName(piece[0])} ${NAME[piece[1]]} de ${fromNm} para ${toNm}`;
   if(cap)msg+=`, capturando ${NAME[cap[1]]}`;
-  if(!hasAny){over=true;if(check){const winner=colPlur(turn==='w'?'b':'w');msg+=`. Xeque-mate! ${winner} vencem!`;setStatus(`Xeque-mate! ${winner} vencem!`);say(msg);setTimeout(()=>showModal('mate',winner),800);}else{msg+='. Empate por afogamento!';setStatus('Empate!');say(msg);setTimeout(()=>showModal('stale',''),800);}}
-  else if(check){msg+=`. Xeque! Vez das ${colPlur(turn)}.`;setStatus(`Xeque! Vez das ${colPlur(turn)}.`);say(msg);}
-  else{msg+=`. Vez das ${colPlur(turn)}.`;setStatus(`Vez das ${colPlur(turn)}.`);say(msg);}
-  playSound(!!cap,check);
+  if(!hasAny){over=true;if(check){const winner=colPlur(turn==='w'?'b':'w');msg+=`. Xeque-mate! ${winner} vencem!`;setStatus(`Xeque-mate! ${winner} vencem!`);playSound(false,false,true,false,false);say(msg);setTimeout(()=>showModal('mate',winner),800);}else{msg+='. Empate por afogamento!';setStatus('Empate!');playSound(false,false,false,false,false);say(msg);setTimeout(()=>showModal('stale',''),800);}}
+  else if(check){msg+=`. Xeque! Vez das ${colPlur(turn)}.`;setStatus(`Xeque! Vez das ${colPlur(turn)}.`);playSound(false,true,false,false,false);say(msg);}
+  else{msg+=`. Vez das ${colPlur(turn)}.`;setStatus(`Vez das ${colPlur(turn)}.`);playSound(!!cap,false,false,false,false);say(msg);}
 }
 
 function undo(){
@@ -794,24 +804,197 @@ function hasAnyLegal(col){for(let r=0;r<8;r++)for(let c=0;c<8;c++){if(board[r][c
 
 let actx=null;
 function getCtx(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();return actx;}
-function playSound(capture,check){try{const ctx=getCtx();if(check){[440,554,659].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=f;const t=ctx.currentTime+i*.1;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.18,t+.03);g.gain.exponentialRampToValueAtTime(.001,t+.5);o.start(t);o.stop(t+.5);});}else if(capture){const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sawtooth';o.frequency.setValueAtTime(280,ctx.currentTime);o.frequency.linearRampToValueAtTime(120,ctx.currentTime+.22);g.gain.setValueAtTime(.14,ctx.currentTime);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.22);o.start(ctx.currentTime);o.stop(ctx.currentTime+.22);}else{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=520;g.gain.setValueAtTime(0,ctx.currentTime);g.gain.linearRampToValueAtTime(.07,ctx.currentTime+.02);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.18);o.start(ctx.currentTime);o.stop(ctx.currentTime+.18);}}catch(e){}}
 
-function say(text){const el=document.getElementById('narration');el.textContent='';requestAnimationFrame(()=>{el.textContent=text;});if(!narOn||!('speechSynthesis' in window))return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='pt-BR';u.rate=0.95;u.pitch=1.05;speechSynthesis.speak(u);}
+function playSound(capture, check, mate, select, navigate){
+  try{
+    const ctx=getCtx();
+    if(mate){
+      // Som dramático de xeque-mate: acorde descendente + reverb
+      [659,554,440,330].forEach((f,i)=>{
+        const o=ctx.createOscillator(),g=ctx.createGain();
+        o.connect(g);g.connect(ctx.destination);
+        o.type='sine'; o.frequency.value=f;
+        const t=ctx.currentTime+i*.18;
+        g.gain.setValueAtTime(0,t);
+        g.gain.linearRampToValueAtTime(.22,t+.04);
+        g.gain.exponentialRampToValueAtTime(.001,t+.9);
+        o.start(t);o.stop(t+.9);
+      });
+    } else if(check){
+      // Acorde de xeque: três notas simultâneas tensas
+      [440,554,659].forEach((f,i)=>{
+        const o=ctx.createOscillator(),g=ctx.createGain();
+        o.connect(g);g.connect(ctx.destination);
+        o.type='sine'; o.frequency.value=f;
+        const t=ctx.currentTime+i*.08;
+        g.gain.setValueAtTime(0,t);
+        g.gain.linearRampToValueAtTime(.18,t+.03);
+        g.gain.exponentialRampToValueAtTime(.001,t+.5);
+        o.start(t);o.stop(t+.5);
+      });
+    } else if(capture){
+      // Captura: sawtooth descendente
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.type='sawtooth';
+      o.frequency.setValueAtTime(280,ctx.currentTime);
+      o.frequency.linearRampToValueAtTime(120,ctx.currentTime+.22);
+      g.gain.setValueAtTime(.14,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.22);
+      o.start(ctx.currentTime);o.stop(ctx.currentTime+.22);
+    } else if(select){
+      // Selecionar peça: dois pulsos curtos ascendentes
+      [400,520].forEach((f,i)=>{
+        const o=ctx.createOscillator(),g=ctx.createGain();
+        o.connect(g);g.connect(ctx.destination);
+        o.type='sine'; o.frequency.value=f;
+        const t=ctx.currentTime+i*.1;
+        g.gain.setValueAtTime(0,t);
+        g.gain.linearRampToValueAtTime(.08,t+.02);
+        g.gain.exponentialRampToValueAtTime(.001,t+.12);
+        o.start(t);o.stop(t+.12);
+      });
+    } else if(navigate){
+      // Navegar com setas: clique suave
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.type='sine'; o.frequency.value=360;
+      g.gain.setValueAtTime(0,ctx.currentTime);
+      g.gain.linearRampToValueAtTime(.04,ctx.currentTime+.01);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.07);
+      o.start(ctx.currentTime);o.stop(ctx.currentTime+.07);
+    } else {
+      // Movimento normal: sine simples
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.type='sine'; o.frequency.value=520;
+      g.gain.setValueAtTime(0,ctx.currentTime);
+      g.gain.linearRampToValueAtTime(.07,ctx.currentTime+.02);
+      g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+.18);
+      o.start(ctx.currentTime);o.stop(ctx.currentTime+.18);
+    }
+  }catch(e){}
+}
+
+function say(text){
+  const el=document.getElementById('narration');
+  el.textContent='';
+  requestAnimationFrame(()=>{el.textContent=text;});
+  if(!narOn||!('speechSynthesis' in window))return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='pt-BR'; u.rate=0.95; u.pitch=1.05;
+  speechSynthesis.speak(u);
+}
 function setStatus(t){document.getElementById('status-box').textContent=t;document.getElementById('live-status').textContent=t;}
 function focusSq(r,c){setTimeout(()=>{document.getElementById(`sq${r}${c}`)?.focus();},50);}
 function updateTurn(){document.getElementById('turn-dot').className='turn-dot '+turn;document.getElementById('turn-txt').textContent='Vez das '+colPlur(turn);}
-function updateCaptures(){document.getElementById('cap-w').innerHTML=capW.map(p=>`<span class="cap-piece" title="${NAME[p[1]]}" aria-hidden="true">${GLYPH[p]}</span>`).join('');document.getElementById('cap-b').innerHTML=capB.map(p=>`<span class="cap-piece" title="${NAME[p[1]]}" aria-hidden="true">${GLYPH[p]}</span>`).join('');}
-function updateLog(){const log=document.getElementById('move-log');log.innerHTML='';for(let i=0;i<hist.length;i+=2){const row=document.createElement('div');row.className='log-row';row.innerHTML=`<span class="log-n">${Math.floor(i/2)+1}.</span><span class="log-w">${hist[i]?.notation||''}</span><span class="log-b">${hist[i+1]?.notation||''}</span>`;log.appendChild(row);}log.scrollTop=log.scrollHeight;}
 
-function showModal(type,winner){const el=document.getElementById('modal');document.getElementById('modal-icon').textContent=type==='mate'?'👑':'🃏';document.getElementById('modal-title').textContent=type==='mate'?'Xeque-Mate!':'Empate!';document.getElementById('modal-msg').textContent=type==='mate'?`${winner} vencem. "Off with their heads!"`:`"Curiouser and curiouser!" — Afogamento.`;el.classList.add('open');el.setAttribute('aria-hidden','false');document.getElementById('btn-modal-new').focus();}
+function updateCaptures(){
+  // ARIA melhorado: lista cada peça por nome
+  const wList=capW.map(p=>`${NAME[p[1]]} ${colName(p[0])}`).join(', ')||'nenhuma';
+  const bList=capB.map(p=>`${NAME[p[1]]} ${colName(p[0])}`).join(', ')||'nenhuma';
+  const wEl=document.getElementById('cap-w');
+  const bEl=document.getElementById('cap-b');
+  wEl.innerHTML=capW.map(p=>`<span class="cap-piece" title="${NAME[p[1]]}" aria-hidden="true">${GLYPH[p]}</span>`).join('');
+  wEl.setAttribute('aria-label',`Capturadas pelas brancas: ${wList}`);
+  bEl.innerHTML=capB.map(p=>`<span class="cap-piece" title="${NAME[p[1]]}" aria-hidden="true">${GLYPH[p]}</span>`).join('');
+  bEl.setAttribute('aria-label',`Capturadas pelas pretas: ${bList}`);
+}
+
+function updateLog(){
+  const log=document.getElementById('move-log');log.innerHTML='';
+  for(let i=0;i<hist.length;i+=2){
+    const row=document.createElement('div');row.className='log-row';
+    row.innerHTML=`<span class="log-n">${Math.floor(i/2)+1}.</span><span class="log-w">${hist[i]?.notation||''}</span><span class="log-b">${hist[i+1]?.notation||''}</span>`;
+    log.appendChild(row);
+  }
+  log.scrollTop=log.scrollHeight;
+}
+
+function showModal(type,winner){
+  const el=document.getElementById('modal');
+  document.getElementById('modal-icon').textContent=type==='mate'?'👑':'🃏';
+  document.getElementById('modal-title').textContent=type==='mate'?'Xeque-Mate!':'Empate!';
+  document.getElementById('modal-msg').textContent=type==='mate'
+    ?`${winner} vencem. "Off with their heads!"`
+    :`"Curiouser and curiouser!" — Afogamento.`;
+  el.classList.add('open');el.setAttribute('aria-hidden','false');
+  document.getElementById('btn-modal-new').focus();
+}
 function closeModal(){const el=document.getElementById('modal');el.classList.remove('open');el.setAttribute('aria-hidden','true');}
 
-function readBoard(){const whites=[],blacks=[];for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=board[r][c];if(!p)continue;(p[0]==='w'?whites:blacks).push(`${NAME[p[1]]} em ${sqName(r,c)}`);}say(`Brancas: ${whites.join(', ')}. Pretas: ${blacks.join(', ')}.`);}
-function readMoves(){if(!sel){say('Nenhuma peça selecionada.');return;}const p=board[sel[0]][sel[1]];if(!p){say('Nenhuma peça selecionada.');return;}if(!poss.length)say(`${colName(p[0])} ${NAME[p[1]]} em ${sqName(sel[0],sel[1])} não tem movimentos.`);else say(`Movimentos de ${NAME[p[1]]}: ${poss.map(m=>sqName(m[0],m[1])).join(', ')}.`);}
+function readBoard(){
+  const whites=[],blacks=[];
+  for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+    const p=board[r][c];if(!p)continue;
+    (p[0]==='w'?whites:blacks).push(`${NAME[p[1]]} em ${sqName(r,c)}`);
+  }
+  say(`Brancas: ${whites.join(', ')}. Pretas: ${blacks.join(', ')}.`);
+}
+function readMoves(){
+  if(!sel){say('Nenhuma peça selecionada.');return;}
+  const p=board[sel[0]][sel[1]];if(!p){say('Nenhuma peça selecionada.');return;}
+  if(!poss.length)say(`${colName(p[0])} ${NAME[p[1]]} em ${sqName(sel[0],sel[1])} não tem movimentos.`);
+  else say(`Movimentos de ${NAME[p[1]]}: ${poss.map(m=>sqName(m[0],m[1])).join(', ')}.`);
+}
+
+// ── ATALHO T: ler turno ──
+function readTurn(){
+  const checkTxt = isInCheck(turn) ? ` Atenção: Rei das ${colPlur(turn)} em xeque!` : '';
+  say(`Vez das ${colPlur(turn)}.${checkTxt}`);
+}
+
+// ── ATALHO P: ler placar/capturas ──
+function readScore(){
+  const wList = capW.length ? capW.map(p=>NAME[p[1]]).join(', ') : 'nenhuma';
+  const bList = capB.length ? capB.map(p=>NAME[p[1]]).join(', ') : 'nenhuma';
+  say(`Brancas capturaram: ${wList}. Pretas capturaram: ${bList}. Total de movimentos: ${hist.length}.`);
+}
+
+// ── TUTORIAL NARRADO ──
+const TUTORIAL = [
+  'Bem-vinda ao Xadrez das Maravilhas.',
+  'Este jogo foi criado para ser totalmente jogável por pessoas cegas.',
+  'Use as teclas de seta para navegar entre as casas do tabuleiro.',
+  'Pressione Enter para selecionar uma peça. O jogo narrará os movimentos possíveis.',
+  'Pressione Enter novamente na casa de destino para mover a peça.',
+  'Pressione Escape para cancelar uma seleção.',
+  'Pressione T a qualquer momento para ouvir de quem é a vez.',
+  'Pressione P para ouvir as peças capturadas.',
+  'Pressione Tab para ir à próxima casa com uma peça.',
+  'Boa partida!'
+];
+let tutorialIdx=0, tutorialTimer=null;
+
+function runTutorial(){
+  if(tutorialIdx>=TUTORIAL.length){tutorialIdx=0;return;}
+  say(TUTORIAL[tutorialIdx]);
+  tutorialIdx++;
+  tutorialTimer=setTimeout(runTutorial,3200);
+}
+function stopTutorial(){
+  clearTimeout(tutorialTimer);tutorialIdx=0;
+}
+
+// Botão tutorial
+document.getElementById('btn-read-board').insertAdjacentHTML('afterend',
+  '<button class="btn-game" id="btn-tutorial">🎓 Tutorial narrado</button>'
+);
+document.getElementById('btn-tutorial').addEventListener('click',()=>{
+  try{getCtx();}catch(e){}
+  if(tutorialIdx>0){stopTutorial();say('Tutorial encerrado.');}
+  else{runTutorial();}
+});
 
 let firstTabFocus = true;
 
-function startGame(){resetState();render();firstTabFocus=true;setStatus('Nova partida. Vez das Brancas. Use as setas para navegar e Enter para selecionar.');setTimeout(()=>say('Nova partida de Xadrez das Maravilhas. Vez das Brancas.'),5000);closeModal();}
+function startGame(){
+  resetState();render();firstTabFocus=true;stopTutorial();
+  setStatus('Nova partida. Vez das Brancas. Use as setas para navegar e Enter para selecionar.');
+  setTimeout(()=>say('Nova partida de Xadrez das Maravilhas. Vez das Brancas.'),5000);
+  closeModal();
+}
 
 document.getElementById('btn-new').addEventListener('click',()=>{try{getCtx();}catch(e){}startGame();});
 document.getElementById('btn-modal-new').addEventListener('click',startGame);
@@ -819,7 +1002,18 @@ document.getElementById('btn-undo').addEventListener('click',undo);
 document.getElementById('btn-flip').addEventListener('click',()=>{flipped=!flipped;render();say('Tabuleiro girado.');});
 document.getElementById('btn-read-board').addEventListener('click',readBoard);
 document.getElementById('btn-read-moves').addEventListener('click',readMoves);
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+// ── ATALHOS GLOBAIS T e P ──
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();return;}
+  // Ignorar se foco está em input/select/button fora do tabuleiro
+  const tag=document.activeElement?.tagName;
+  if(tag==='INPUT'||tag==='SELECT'||tag==='TEXTAREA')return;
+  // Ignorar se estiver numa casa do tabuleiro (as setas já funcionam pelo handleKey)
+  const inBoard=document.activeElement?.classList.contains('sq');
+  if(e.key==='t'||e.key==='T'){e.preventDefault();readTurn();}
+  if(e.key==='p'||e.key==='P'){e.preventDefault();readScore();}
+});
 
 function saveP(k,v){try{localStorage.setItem(k,v);}catch(e){}}
 function loadP(k){try{return localStorage.getItem(k);}catch(e){return null;}}
