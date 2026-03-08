@@ -686,6 +686,16 @@ function renderGrid(){
       if(piece){const sp=document.createElement('span');sp.className='piece '+(piece[0]==='w'?'white-piece':'black-piece');sp.textContent=GLYPH[piece];sp.setAttribute('aria-hidden','true');sq.appendChild(sp);}
       sq.addEventListener('click',()=>handleClick(r,c));
       sq.addEventListener('keydown',e=>handleKey(e,r,c));
+      sq.addEventListener('focus',e=>{
+        if(firstTabFocus && piece && piece[0]==='w'){
+          firstTabFocus = false;
+          const nm = sqName(r,c);
+          setTimeout(()=>say(
+            `Você está no tabuleiro. Casa ${nm}, ${NAME[piece[1]]} Branca. `+
+            `Use as setas para navegar, Enter para selecionar a peça e ver os movimentos possíveis, Escape para cancelar.`
+          ), 200);
+        }
+      });
       rankDiv.appendChild(sq);
     });
     wrap.appendChild(rankDiv);
@@ -799,7 +809,9 @@ function closeModal(){const el=document.getElementById('modal');el.classList.rem
 function readBoard(){const whites=[],blacks=[];for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=board[r][c];if(!p)continue;(p[0]==='w'?whites:blacks).push(`${NAME[p[1]]} em ${sqName(r,c)}`);}say(`Brancas: ${whites.join(', ')}. Pretas: ${blacks.join(', ')}.`);}
 function readMoves(){if(!sel){say('Nenhuma peça selecionada.');return;}const p=board[sel[0]][sel[1]];if(!p){say('Nenhuma peça selecionada.');return;}if(!poss.length)say(`${colName(p[0])} ${NAME[p[1]]} em ${sqName(sel[0],sel[1])} não tem movimentos.`);else say(`Movimentos de ${NAME[p[1]]}: ${poss.map(m=>sqName(m[0],m[1])).join(', ')}.`);}
 
-function startGame(){resetState();render();setStatus('Nova partida. Vez das Brancas. Use as setas para navegar e Enter para selecionar.');setTimeout(()=>say('Nova partida de Xadrez das Maravilhas. Vez das Brancas.'),5000);closeModal();}
+let firstTabFocus = true;
+
+function startGame(){resetState();render();firstTabFocus=true;setStatus('Nova partida. Vez das Brancas. Use as setas para navegar e Enter para selecionar.');setTimeout(()=>say('Nova partida de Xadrez das Maravilhas. Vez das Brancas.'),5000);closeModal();}
 
 document.getElementById('btn-new').addEventListener('click',()=>{try{getCtx();}catch(e){}startGame();});
 document.getElementById('btn-modal-new').addEventListener('click',startGame);
